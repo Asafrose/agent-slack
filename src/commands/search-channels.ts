@@ -1,7 +1,57 @@
 import { Command } from "commander";
 import { getClient } from "../client";
-import { formatOutput, resolveFormat } from "../output";
+import { formatOutput, resolveFormat, OutputFormat } from "../output";
 import { handleSlackError } from "../errors";
+
+interface Channel {
+  id?: string;
+  name?: string;
+  purpose?: { value?: string };
+  topic?: { value?: string };
+  num_members?: number;
+  creator?: string;
+  created?: number;
+  is_archived?: boolean;
+}
+
+function formatChannelConcise(ch: Channel): string {
+  const name = ch.name ? `#${ch.name}` : ch.id ?? "unknown";
+  const purpose = ch.purpose?.value ?? "";
+  const members = ch.num_members !== undefined ? ` [${ch.num_members} members]` : "";
+  return purpose ? `${name} - ${purpose}${members}` : `${name}${members}`;
+}
+
+function formatChannelDetailed(ch: Channel): string {
+  const lines: string[] = [];
+  lines.push(`Name: ${ch.name ? `#${ch.name}` : ch.id ?? "unknown"}`);
+  if (ch.id) lines.push(`ID: ${ch.id}`);
+  if (ch.creator) lines.push(`Creator: ${ch.creator}`);
+  if (ch.created) lines.push(`Created: ${new Date(ch.created * 1000).toISOString()}`);
+  if (ch.purpose?.value) lines.push(`Purpose: ${ch.purpose.value}`);
+  if (ch.topic?.value) lines.push(`Topic: ${ch.topic.value}`);
+  if (ch.num_members !== undefined) lines.push(`Members: ${ch.num_members}`);
+  lines.push(`Archived: ${ch.is_archived ? "yes" : "no"}`);
+  return lines.join("\n");
+}
+
+function formatChannels(
+  channels: Channel[],
+  nextCursor: string | undefined,
+  format: OutputFormat
+): string {
+  if (format === "json") {
+    return JSON.stringify({ channels, next_cursor: nextCursor ?? "" }, null, 2);
+  }
+  if (format === "detailed") {
+    const parts = channels.map(formatChannelDetailed);
+    const out = parts.join("\n\n");
+    return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+  }
+  // concise
+  const lines = channels.map(formatChannelConcise);
+  const out = lines.join("\n");
+  return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+}
 
 export function register(program: Command): void {
   program
@@ -25,11 +75,16 @@ export function register(program: Command): void {
           exclude_archived: !opts.includeArchived,
           cursor: opts.cursor,
         });
+        const query = opts.query.toLowerCase();
+        const channels = (result.channels ?? []).filter((ch) => {
+          const name = ch.name?.toLowerCase() ?? "";
+          const purpose = (ch as unknown as Channel).purpose?.value?.toLowerCase() ?? "";
+          const topic = (ch as unknown as Channel).topic?.value?.toLowerCase() ?? "";
+          return name.includes(query) || purpose.includes(query) || topic.includes(query);
+        });
         const format = resolveFormat(mergedOpts);
-        const channels = (result.channels ?? []).filter((ch) =>
-          ch.name?.toLowerCase().includes(opts.query.toLowerCase())
-        );
-        console.log(formatOutput({ channels, response_metadata: result.response_metadata }, format));
+        const nextCursor = result.response_metadata?.next_cursor;
+        console.log(formatChannels(channels as Channel[], nextCursor, format));
       } catch (err) {
         handleSlackError(err);
       }
