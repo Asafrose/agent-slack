@@ -1,4 +1,4 @@
-export const SLACK_CLIENT_ID = "YOUR_CLIENT_ID"; // Replace after creating Slack app
+export const SLACK_CLIENT_ID = "10541319044898.10537898644965";
 export const OAUTH_WORKER_URL = "https://agent-slack.asafr1993.workers.dev";
 export const OAUTH_CALLBACK_PORT = 9876;
 export const OAUTH_USER_SCOPES =
