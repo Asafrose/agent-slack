@@ -22,17 +22,21 @@ agent-slack logout               # remove stored token
 
 ## Installation
 
-```bash
-# Clone and install
-git clone <repo-url>
-cd agent-slack
-bun install
+### Homebrew (recommended)
 
-# Make the CLI globally available
-bun link
+```bash
+brew tap asafrose/agent-slack
+brew install agent-slack
 ```
 
-After `bun link`, the `agent-slack` command is available system-wide.
+### From Source
+
+```bash
+git clone https://github.com/Asafrose/agent-slack.git
+cd agent-slack
+bun install
+bun link
+```
 
 ## Usage
 
