@@ -1,7 +1,8 @@
 import { Command } from "commander";
 import { getClient } from "../client";
-import { formatOutput, resolveFormat } from "../output";
+import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
+import { formatMessages, MessagesResult } from "../formatters/messages";
 
 export function register(program: Command): void {
   program
@@ -27,7 +28,7 @@ export function register(program: Command): void {
           cursor: opts.cursor,
         });
         const format = resolveFormat(mergedOpts);
-        console.log(formatOutput(result.messages, format));
+        console.log(formatMessages(result.messages as MessagesResult | undefined, format));
       } catch (err) {
         handleSlackError(err);
       }

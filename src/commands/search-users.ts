@@ -1,7 +1,80 @@
 import { Command } from "commander";
 import { getClient } from "../client";
-import { formatOutput, resolveFormat } from "../output";
+import { resolveFormat, OutputFormat } from "../output";
 import { handleSlackError } from "../errors";
+
+interface UserProfile {
+  email?: string;
+  title?: string;
+  display_name?: string;
+  image_72?: string;
+  image_192?: string;
+}
+
+interface SlackUser {
+  id?: string;
+  name?: string;
+  real_name?: string;
+  tz?: string;
+  is_admin?: boolean;
+  is_bot?: boolean;
+  deleted?: boolean;
+  profile?: UserProfile;
+}
+
+function formatUserConcise(u: SlackUser): string {
+  const username = u.name ? `@${u.name}` : u.id ?? "unknown";
+  const displayName = u.real_name ?? u.profile?.display_name ?? "";
+  const title = u.profile?.title ?? "";
+  const parts = [`${username}${displayName ? ` (${displayName})` : ""}`];
+  if (title) parts.push(title);
+  return parts.join(" - ");
+}
+
+function formatUserDetailed(u: SlackUser): string {
+  const lines: string[] = [];
+  lines.push(`Username: ${u.name ? `@${u.name}` : u.id ?? "unknown"}`);
+  if (u.id) lines.push(`ID: ${u.id}`);
+  if (u.real_name) lines.push(`Real Name: ${u.real_name}`);
+  if (u.profile?.display_name) lines.push(`Display Name: ${u.profile.display_name}`);
+  if (u.profile?.title) lines.push(`Title: ${u.profile.title}`);
+  if (u.profile?.email) lines.push(`Email: ${u.profile.email}`);
+  if (u.tz) lines.push(`Timezone: ${u.tz}`);
+  if (u.profile?.image_192) lines.push(`Profile Pic: ${u.profile.image_192}`);
+  if (u.is_admin !== undefined) lines.push(`Admin: ${u.is_admin ? "yes" : "no"}`);
+  if (u.is_bot !== undefined) lines.push(`Bot: ${u.is_bot ? "yes" : "no"}`);
+  return lines.join("\n");
+}
+
+function formatUsers(
+  users: SlackUser[],
+  nextCursor: string | undefined,
+  format: OutputFormat
+): string {
+  if (format === "json") {
+    return JSON.stringify({ users, next_cursor: nextCursor ?? "" }, null, 2);
+  }
+  if (format === "detailed") {
+    const parts = users.map(formatUserDetailed);
+    const out = parts.join("\n\n");
+    return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+  }
+  // concise
+  const lines = users.map(formatUserConcise);
+  const out = lines.join("\n");
+  return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+}
+
+function matchesQuery(u: SlackUser, query: string): boolean {
+  const q = query.toLowerCase();
+  return (
+    (u.name?.toLowerCase().includes(q) ?? false) ||
+    (u.real_name?.toLowerCase().includes(q) ?? false) ||
+    (u.profile?.email?.toLowerCase().includes(q) ?? false) ||
+    (u.profile?.title?.toLowerCase().includes(q) ?? false) ||
+    (u.profile?.display_name?.toLowerCase().includes(q) ?? false)
+  );
+}
 
 export function register(program: Command): void {
   program
@@ -23,10 +96,10 @@ export function register(program: Command): void {
         });
         const format = resolveFormat(mergedOpts);
         const users = (result.members ?? []).filter((u) =>
-          u.name?.toLowerCase().includes(opts.query.toLowerCase()) ||
-          u.real_name?.toLowerCase().includes(opts.query.toLowerCase())
+          matchesQuery(u as SlackUser, opts.query)
         );
-        console.log(formatOutput({ users, response_metadata: result.response_metadata }, format));
+        const nextCursor = result.response_metadata?.next_cursor;
+        console.log(formatUsers(users as SlackUser[], nextCursor, format));
       } catch (err) {
         handleSlackError(err);
       }
