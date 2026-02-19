@@ -30,7 +30,7 @@ describe("logout", () => {
   it("calls deleteConfigKey and prints confirmation", async () => {
     const { register } = await import("../../../src/commands/logout");
     const program = new Command();
-    program.option("--token <token>").option("--detailed").option("--json");
+    program.option("--detailed").option("--json");
     register(program);
 
     await program.parseAsync(["node", "agent-slack", "logout"]);

@@ -17,9 +17,8 @@ export function register(program: Command): void {
     .option("--json", "JSON output")
     .action(async (opts, cmd) => {
       try {
-        const globalOpts = cmd.parent?.opts() ?? {};
-        const mergedOpts = { ...globalOpts, ...opts };
-        const client = await getClient({ token: mergedOpts.token });
+        const mergedOpts = { ...(cmd.parent?.opts() ?? {}), ...opts };
+        const client = await getClient();
         const text = await resolveTextInput({ text: opts.text, textFile: opts.textFile });
         const result = await client.chat.postMessage({
           channel: opts.channel,

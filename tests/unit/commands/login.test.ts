@@ -63,7 +63,7 @@ describe("login", () => {
   it("rejects callback with mismatched state", async () => {
     const { register } = await import("../../../src/commands/login");
     const program = new Command();
-    program.option("--token <token>").option("--detailed").option("--json");
+    program.option("--detailed").option("--json");
     register(program);
 
     const loginPromise = program.parseAsync(["node", "agent-slack", "login", "--port", "0"]);
@@ -92,7 +92,7 @@ describe("login", () => {
   it("handles Slack OAuth error parameter", async () => {
     const { register } = await import("../../../src/commands/login");
     const program = new Command();
-    program.option("--token <token>").option("--detailed").option("--json");
+    program.option("--detailed").option("--json");
     register(program);
 
     const loginPromise = program.parseAsync(["node", "agent-slack", "login", "--port", "0"]);
@@ -118,7 +118,7 @@ describe("login", () => {
   it("returns 404 for non-callback paths", async () => {
     const { register } = await import("../../../src/commands/login");
     const program = new Command();
-    program.option("--token <token>").option("--detailed").option("--json");
+    program.option("--detailed").option("--json");
     register(program);
 
     const loginPromise = program.parseAsync(["node", "agent-slack", "login", "--port", "0"]);

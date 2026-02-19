@@ -29,6 +29,8 @@ const ALL_COMMANDS = [
   "search-all",
   "create-canvas",
   "read-canvas",
+  "login",
+  "logout",
 ];
 
 describe("agent-slack CLI", () => {
@@ -48,9 +50,8 @@ describe("agent-slack CLI", () => {
       }
     });
 
-    it("shows global --token, --detailed, --json flags", () => {
+    it("shows global --detailed, --json flags", () => {
       const { stdout } = run(["--help"]);
-      expect(stdout).toContain("--token");
       expect(stdout).toContain("--detailed");
       expect(stdout).toContain("--json");
     });
@@ -221,7 +222,7 @@ describe("agent-slack CLI", () => {
 
   describe("auth error", () => {
     it("exits non-zero with helpful message when no token configured", () => {
-      // Ensure no token is available: unset env, no config, no --token flag
+      // Ensure no token is available: no config file
       const result = spawnSync("bun", ["run", CLI, "read-user-profile"], {
         encoding: "utf-8",
         env: {
@@ -232,7 +233,7 @@ describe("agent-slack CLI", () => {
       });
       expect(result.status).toBe(1);
       const output = (result.stdout ?? "") + (result.stderr ?? "");
-      expect(output.toLowerCase()).toMatch(/token|auth/);
+      expect(output.toLowerCase()).toMatch(/login|token|auth/);
     });
   });
 });

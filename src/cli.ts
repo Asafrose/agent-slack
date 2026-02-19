@@ -20,7 +20,6 @@ program
   .name("agent-slack")
   .description("Slack CLI tool for AI agents - replaces MCP Slack tools with a token-efficient CLI")
   .version("0.1.0")
-  .option("--token <token>", "Slack API token")
   .option("--detailed", "Use detailed output format")
   .option("--json", "Use JSON output format");
 

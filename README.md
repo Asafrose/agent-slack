@@ -7,9 +7,7 @@ A Bun CLI + Claude Code plugin that replaces the 12 Slack MCP server tools with 
 - [Bun](https://bun.sh/) v1.0+
 - A Slack workspace you can authorize against
 
-## Quick Start — OAuth Login
-
-The easiest way to authenticate:
+## Authentication
 
 ```bash
 agent-slack login
@@ -23,91 +21,11 @@ To remove the stored token:
 agent-slack logout
 ```
 
-## Alternative: Manual Token Setup
-
-If you prefer manual token configuration (e.g. for bot tokens or CI environments):
-
-### 1. Create a Slack App
-
-1. Go to [api.slack.com/apps](https://api.slack.com/apps) and click **Create New App**
-2. Choose **From scratch**, give it a name (e.g. "Agent Slack"), and select your workspace
-3. You'll land on the app's **Basic Information** page
-
-### 2. Choose Token Type
-
-agent-slack supports both **User Tokens** and **Bot Tokens**. Choose based on your use case:
-
-| | User Token (`xoxp-...`) | Bot Token (`xoxb-...`) |
-| --- | --- | --- |
-| **Messages sent as** | You (your Slack identity) | The bot app |
-| **Access to DMs** | Yes, your own DMs | Only if invited |
-| **Drafts** | Appear in your Slack drafts | Not supported |
-| **Channel access** | All channels you're in | Only channels bot is invited to |
-| **Search private/DMs** | Yes (`search-all`) | Limited |
-| **Best for** | Personal AI assistant (like MCP) | Shared team automation |
-
-**Recommended: User Token** if you want the same experience as the Slack MCP tools (read/write as yourself).
-
-### 3. Add Token Scopes
-
-Navigate to **OAuth & Permissions** in the sidebar, scroll to **Scopes**.
-
-**For a User Token**, add these **User Token Scopes**:
-
-| Scope              | Required By                                         | Purpose                           |
-| ------------------ | --------------------------------------------------- | --------------------------------- |
-| `search:read`      | `search-messages`, `search-all`                     | Search messages across channels   |
-| `chat:write`       | `send-message`, `schedule-message`, `draft-message` | Post and schedule messages        |
-| `channels:history` | `read-channel`, `read-thread`                       | Read messages in public channels  |
-| `groups:history`   | `read-channel`, `read-thread`                       | Read messages in private channels |
-| `im:history`       | `read-channel`, `read-thread`                       | Read direct messages              |
-| `mpim:history`     | `read-channel`, `read-thread`                       | Read group DMs                    |
-| `channels:read`    | `search-channels`                                   | List and search public channels   |
-| `groups:read`      | `search-channels`                                   | List and search private channels  |
-| `users:read`       | `search-users`, `read-user-profile`                 | Look up user profiles             |
-| `users:read.email` | `search-users`, `read-user-profile`                 | Access user email addresses       |
-| `canvases:write`   | `create-canvas`                                     | Create Canvas documents           |
-| `canvases:read`    | `read-canvas`                                       | Read Canvas content               |
-
-**For a Bot Token**, add the same scopes under **Bot Token Scopes** instead. Note that the bot will need to be invited to each channel (`/invite @YourBotName`), and `draft-message` only works with user tokens.
-
-**Minimal scope set** — if you only need read operations, skip `chat:write` and `canvases:write`.
-
-### 4. Install the App to Your Workspace
-
-1. Still on **OAuth & Permissions**, scroll up and click **Install to Workspace**
-2. Review the permissions and click **Allow**
-3. Copy the token:
-   - **User Token**: copy the **User OAuth Token** (`xoxp-...`)
-   - **Bot Token**: copy the **Bot User OAuth Token** (`xoxb-...`)
-
-### 5. Configure the Token
-
-Pick one of the three auth methods:
+Verify it works:
 
 ```bash
-# Option A: Environment variable (recommended)
-export SLACK_TOKEN=xoxp-your-token-here
-
-# Option B: Config file
-mkdir -p ~/.agent-slack
-echo '{ "token": "xoxp-your-token-here" }' > ~/.agent-slack/config.json
-
-# Option C: Pass per-command
-agent-slack read-channel --channel C12345 --token xoxp-your-token
-```
-
-### 6. Verify It Works
-
-```bash
-# Should print your profile info
 agent-slack read-user-profile
-
-# Should list channels matching the query
-agent-slack search-channels --query "general"
 ```
-
-If you see `Slack API error: missing_scope`, go back to step 3 and add the required scope for that command.
 
 ## Installation
 
@@ -122,16 +40,6 @@ bun link
 ```
 
 After `bun link`, the `agent-slack` command is available system-wide.
-
-## Authentication
-
-The CLI resolves auth in this order (first match wins):
-
-1. `SLACK_TOKEN` environment variable
-2. `--token` flag on any command
-3. `~/.agent-slack/config.json` file (set by `agent-slack login` or manually)
-
-The fastest way to authenticate is `agent-slack login` — see [Quick Start](#quick-start--oauth-login) above.
 
 ## Usage
 

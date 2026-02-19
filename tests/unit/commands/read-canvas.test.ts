@@ -25,7 +25,6 @@ const { register } = await import("../../../src/commands/read-canvas");
 function createProgram() {
   const program = new Command();
   program
-    .option("--token <token>", "Slack API token")
     .option("--detailed", "Use detailed output format")
     .option("--json", "Use JSON output format");
   register(program);

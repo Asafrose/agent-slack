@@ -27,7 +27,7 @@ async function runCommand(args: string[]): Promise<string> {
   });
   const { register } = await import("../../../src/commands/draft-message");
   const program = new Command();
-  program.option("--token <token>").option("--detailed").option("--json");
+  program.option("--detailed").option("--json");
   register(program);
   await program.parseAsync(["node", "agent-slack", ...args]);
   consoleSpy.mockRestore();

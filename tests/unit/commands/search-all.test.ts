@@ -11,7 +11,6 @@ async function runCommand(args: string[]): Promise<string> {
   const { register } = await import("../../../src/commands/search-all");
   const program = new Command();
   program.exitOverride();
-  program.option("--token <token>", "Slack API token");
   program.option("--detailed", "Detailed output");
   program.option("--json", "JSON output");
   register(program);

@@ -11,23 +11,16 @@ A token-efficient CLI that replaces the Slack MCP tools. Use `agent-slack` for a
 
 ## Authentication
 
-The easiest way to authenticate is `agent-slack login` — it opens a browser for Slack OAuth and saves the token automatically.
-
-Auth is resolved in this order:
-
-1. `SLACK_TOKEN` environment variable
-2. `--token <token>` global flag
-3. `~/.agent-slack/config.json` → `{ "token": "xoxp-..." }` (set by `login` or manually)
+Run `agent-slack login` to authenticate via OAuth. The token is saved to `~/.agent-slack/config.json`.
 
 ## Global Flags
 
 These flags work on every subcommand:
 
-| Flag              | Description                                |
-| ----------------- | ------------------------------------------ |
-| `--token <token>` | Slack API token (overrides env and config) |
-| `--detailed`      | Verbose output with all fields             |
-| `--json`          | Raw JSON output (structured, parseable)    |
+| Flag         | Description                             |
+| ------------ | --------------------------------------- |
+| `--detailed` | Verbose output with all fields          |
+| `--json`     | Raw JSON output (structured, parseable) |
 
 Default output is **concise** — minimal text optimized for token efficiency.
 
