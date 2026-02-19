@@ -13,6 +13,15 @@ mock.module("../../../src/input", () => ({
     if (opts.text) return opts.text;
     return "stdin text";
   }),
+  buildMessageBlocks: (text: string) => [
+    { type: "section", text: { type: "mrkdwn", text } },
+    {
+      type: "context",
+      elements: [
+        { type: "mrkdwn", text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_" },
+      ],
+    },
+  ],
 }));
 
 async function runCommand(args: string[]): Promise<string> {
@@ -46,7 +55,15 @@ describe("schedule-message", () => {
       "1700000000",
     ]);
     expect(mockClient.chat.scheduleMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ channel: "C12345", text: "Future message", post_at: 1700000000 }),
+      expect.objectContaining({
+        channel: "C12345",
+        text: "Future message",
+        post_at: 1700000000,
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ type: "section" }),
+          expect.objectContaining({ type: "context" }),
+        ]),
+      }),
     );
     expect(output).toContain("Message scheduled in C12345");
     expect(output).toContain("Q12345");

@@ -13,6 +13,15 @@ mock.module("../../../src/input", () => ({
     if (opts.text) return opts.text;
     return "stdin text";
   }),
+  buildMessageBlocks: (text: string) => [
+    { type: "section", text: { type: "mrkdwn", text } },
+    {
+      type: "context",
+      elements: [
+        { type: "mrkdwn", text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_" },
+      ],
+    },
+  ],
 }));
 
 async function runCommand(args: string[]): Promise<string> {
@@ -38,7 +47,14 @@ describe("send-message", () => {
   it("sends a message and prints concise output", async () => {
     const output = await runCommand(["send-message", "--channel", "C12345", "--text", "Hello!"]);
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ channel: "C12345", text: "Hello!" }),
+      expect.objectContaining({
+        channel: "C12345",
+        text: "Hello!",
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ type: "section" }),
+          expect.objectContaining({ type: "context" }),
+        ]),
+      }),
     );
     expect(output).toContain("Message sent to C12345");
     expect(output).toContain("1234567890.123456");

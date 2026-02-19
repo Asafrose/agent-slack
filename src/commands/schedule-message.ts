@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { getClient } from "../client";
-import { resolveTextInput } from "../input";
+import { resolveTextInput, buildMessageBlocks } from "../input";
 import { formatOutput, resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
 
@@ -39,6 +39,7 @@ export function register(program: Command): void {
         const result = await client.chat.scheduleMessage({
           channel: opts.channel,
           text,
+          blocks: buildMessageBlocks(text),
           post_at: postAt,
           thread_ts: opts.threadTs,
           reply_broadcast: opts.replyBroadcast,
