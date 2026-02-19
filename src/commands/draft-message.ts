@@ -20,17 +20,27 @@ export function register(program: Command): void {
         const mergedOpts = { ...globalOpts, ...opts };
         const client = getClient({ token: mergedOpts.token });
         const text = await resolveTextInput({ text: opts.text, textFile: opts.textFile });
-        // Draft messages use the files.getUploadURLExternal / files.completeUploadExternal pattern
-        // or client.drafts API if available. For now use chat.postMessage with a placeholder.
-        // The actual Slack "drafts" API is not in the official SDK yet.
-        // We use conversations API workaround: post to a draft endpoint.
-        const result = await (client as unknown as { drafts?: { add: (args: unknown) => Promise<unknown> } }).drafts?.add?.({
+
+        // The Slack drafts API is undocumented and not in the typed SDK.
+        // Use client.apiCall to hit the draft.create endpoint directly.
+        const apiArgs: Record<string, unknown> = {
           channel_id: opts.channel,
           message: { text },
-          thread_ts: opts.threadTs,
-        }) ?? { channel_id: opts.channel };
+        };
+        if (opts.threadTs) {
+          apiArgs.thread_ts = opts.threadTs;
+        }
+        const result = await client.apiCall("draft.create", apiArgs) as Record<string, unknown>;
+
         const format = resolveFormat(mergedOpts);
-        console.log(formatOutput(result, format));
+        if (format === "concise") {
+          console.log(`Draft created in ${opts.channel}`);
+        } else if (format === "detailed") {
+          const channelLink = `https://slack.com/app_redirect?channel=${opts.channel}`;
+          console.log(formatOutput({ channel: opts.channel, channel_link: channelLink, draft: result }, "detailed"));
+        } else {
+          console.log(formatOutput(result, "json"));
+        }
       } catch (err) {
         handleSlackError(err);
       }

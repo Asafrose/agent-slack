@@ -28,7 +28,17 @@ export function register(program: Command): void {
           reply_broadcast: opts.replyBroadcast,
         });
         const format = resolveFormat(mergedOpts);
-        console.log(formatOutput({ ts: result.ts, channel: result.channel }, format));
+        if (format === "concise") {
+          console.log(`Message sent to ${opts.channel} (ts: ${result.ts})`);
+        } else if (format === "detailed") {
+          console.log(formatOutput({
+            ts: result.ts,
+            channel: result.channel,
+            message: result.message,
+          }, "detailed"));
+        } else {
+          console.log(formatOutput(result, "json"));
+        }
       } catch (err) {
         handleSlackError(err);
       }
