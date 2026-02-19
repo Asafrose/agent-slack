@@ -1,6 +1,6 @@
 import { describe, it, expect, spyOn, beforeEach } from "bun:test";
 import { ErrorCode } from "@slack/web-api";
-import type { CodedError } from "@slack/web-api/dist/errors";
+import type { CodedError } from "../../src/errors";
 
 function makeSlackError(message: string, code: string, slackErrorCode?: string): CodedError {
   const err = new Error(message) as CodedError;

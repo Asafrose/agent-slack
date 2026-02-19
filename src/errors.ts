@@ -1,6 +1,6 @@
 import { ErrorCode } from "@slack/web-api";
 
-interface CodedError extends Error {
+export interface CodedError extends Error {
   code: string;
   data?: { error?: string };
 }
