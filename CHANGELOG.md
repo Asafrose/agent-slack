@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/Asafrose/agent-slack/compare/v0.2.0...v0.3.0) (2026-02-19)
+
+
+### Features
+
+* add "sent by agent-slack" footer to outgoing messages ([229b1fa](https://github.com/Asafrose/agent-slack/commit/229b1fa6f1bf620379b16de11d5ecdb3b9b313d7))
+* add sent-by-agent-slack footer to outgoing messages ([ec225b5](https://github.com/Asafrose/agent-slack/commit/ec225b5118bb5d146d2601d00911c44e8c3a6521))
+
+
+### Bug Fixes
+
+* **ci:** trigger CI on release-please branch pushes ([534eb68](https://github.com/Asafrose/agent-slack/commit/534eb68f00e1cf20086e502c01104b35c82b5a09))
+* **ci:** use GH_PAT in release-please to trigger CI on release PRs ([59fc991](https://github.com/Asafrose/agent-slack/commit/59fc9917f8a6819020cbb43adc15ddd1d4aeae91))
+* **ci:** use GH_PAT in release-please to trigger CI on release PRs ([a1a1f85](https://github.com/Asafrose/agent-slack/commit/a1a1f857aec3d0f2a7d9ae7f28bcb88dbf625a77))
+
 ## [0.2.0](https://github.com/Asafrose/agent-slack/compare/v0.1.0...v0.2.0) (2026-02-19)
 
 
