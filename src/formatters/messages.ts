@@ -1,4 +1,4 @@
-import { OutputFormat } from "../output";
+import type { OutputFormat } from "../output";
 
 export interface MessageChannel {
   id?: string;
@@ -29,7 +29,7 @@ export function formatDate(ts: string | undefined): string {
 }
 
 export function formatMessageConcise(m: MessageMatch): string {
-  const channel = m.channel?.name ? `#${m.channel.name}` : m.channel?.id ?? "unknown";
+  const channel = m.channel?.name ? `#${m.channel.name}` : (m.channel?.id ?? "unknown");
   const author = m.username ?? "unknown";
   const text = (m.text ?? "").slice(0, 80);
   const date = formatDate(m.ts);
@@ -38,7 +38,7 @@ export function formatMessageConcise(m: MessageMatch): string {
 
 export function formatMessageDetailed(m: MessageMatch): string {
   const lines: string[] = [];
-  const channel = m.channel?.name ? `#${m.channel.name}` : m.channel?.id ?? "unknown";
+  const channel = m.channel?.name ? `#${m.channel.name}` : (m.channel?.id ?? "unknown");
   lines.push(`Channel: ${channel}`);
   if (m.ts) lines.push(`TS: ${m.ts}`);
   if (m.ts) lines.push(`Date: ${formatDate(m.ts)}`);
@@ -50,10 +50,7 @@ export function formatMessageDetailed(m: MessageMatch): string {
   return lines.join("\n");
 }
 
-export function formatMessages(
-  result: MessagesResult | undefined,
-  format: OutputFormat
-): string {
+export function formatMessages(result: MessagesResult | undefined, format: OutputFormat): string {
   if (format === "json") {
     return JSON.stringify(result ?? {}, null, 2);
   }

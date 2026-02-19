@@ -43,15 +43,17 @@ describe("create-canvas", () => {
   it("creates a canvas and prints concise output", async () => {
     const output = await runCommand([
       "create-canvas",
-      "--title", "My Canvas",
-      "--content", "# Hello\n\nWorld",
+      "--title",
+      "My Canvas",
+      "--content",
+      "# Hello\n\nWorld",
     ]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
       "canvases.create",
       expect.objectContaining({
         title: "My Canvas",
         document_content: { type: "markdown", markdown: "# Hello\n\nWorld" },
-      })
+      }),
     );
     expect(output).toContain("Canvas created: My Canvas");
     expect(output).toContain("F12345CANVAS");
@@ -60,8 +62,10 @@ describe("create-canvas", () => {
   it("outputs JSON format", async () => {
     const output = await runCommand([
       "create-canvas",
-      "--title", "JSON Canvas",
-      "--content", "Content",
+      "--title",
+      "JSON Canvas",
+      "--content",
+      "Content",
       "--json",
     ]);
     const parsed = JSON.parse(output);
@@ -72,8 +76,10 @@ describe("create-canvas", () => {
   it("outputs detailed format with title and canvas_id", async () => {
     const output = await runCommand([
       "create-canvas",
-      "--title", "Detailed Canvas",
-      "--content", "Content",
+      "--title",
+      "Detailed Canvas",
+      "--content",
+      "Content",
       "--detailed",
     ]);
     const parsed = JSON.parse(output);
@@ -82,17 +88,14 @@ describe("create-canvas", () => {
   });
 
   it("reads content from stdin when no --content or --content-file given", async () => {
-    await runCommand([
-      "create-canvas",
-      "--title", "Stdin Canvas",
-    ]);
+    await runCommand(["create-canvas", "--title", "Stdin Canvas"]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
       "canvases.create",
       expect.objectContaining({
         document_content: expect.objectContaining({
           markdown: "# Stdin Content\n\nSome content.",
         }),
-      })
+      }),
     );
   });
 

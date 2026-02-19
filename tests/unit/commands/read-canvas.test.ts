@@ -4,9 +4,7 @@ import { Command } from "commander";
 const mockState = {
   canvasResult: {
     ok: true,
-    sections: [
-      { id: "section1", content: "# Title\n\nSome content here." },
-    ],
+    sections: [{ id: "section1", content: "# Title\n\nSome content here." }],
   } as unknown,
   canvasError: null as Error | null,
   capturedArgs: null as unknown,
@@ -14,14 +12,10 @@ const mockState = {
 
 mock.module("../../../src/client", () => ({
   getClient: () => ({
-    canvases: {
-      sections: {
-        lookup: async (args: unknown) => {
-          mockState.capturedArgs = args;
-          if (mockState.canvasError) throw mockState.canvasError;
-          return mockState.canvasResult;
-        },
-      },
+    apiCall: async (method: string, args: unknown) => {
+      mockState.capturedArgs = args;
+      if (mockState.canvasError) throw mockState.canvasError;
+      return mockState.canvasResult;
     },
   }),
 }));
@@ -54,9 +48,7 @@ describe("read-canvas command", () => {
     processExitSpy.mockClear();
     mockState.canvasResult = {
       ok: true,
-      sections: [
-        { id: "section1", content: "# Title\n\nSome content here." },
-      ],
+      sections: [{ id: "section1", content: "# Title\n\nSome content here." }],
     };
     mockState.canvasError = null;
     mockState.capturedArgs = null;
@@ -121,7 +113,12 @@ describe("read-canvas command", () => {
     it("shows section IDs with content", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-canvas", "--canvas", "F12345CANVAS", "--detailed",
+        "node",
+        "cli",
+        "read-canvas",
+        "--canvas",
+        "F12345CANVAS",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -141,7 +138,12 @@ describe("read-canvas command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-canvas", "--canvas", "F12345CANVAS", "--detailed",
+        "node",
+        "cli",
+        "read-canvas",
+        "--canvas",
+        "F12345CANVAS",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -156,7 +158,12 @@ describe("read-canvas command", () => {
     it("outputs raw JSON response", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-canvas", "--canvas", "F12345CANVAS", "--json",
+        "node",
+        "cli",
+        "read-canvas",
+        "--canvas",
+        "F12345CANVAS",
+        "--json",
       ]);
 
       expect(consoleLogSpy).toHaveBeenCalled();
@@ -198,7 +205,7 @@ describe("read-canvas command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-canvas", "--canvas", "INVALID"])
+        program.parseAsync(["node", "cli", "read-canvas", "--canvas", "INVALID"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -210,7 +217,7 @@ describe("read-canvas command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-canvas", "--canvas", "F12345CANVAS"])
+        program.parseAsync(["node", "cli", "read-canvas", "--canvas", "F12345CANVAS"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();

@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveTextInput } from "../input";
 import { formatOutput, resolveFormat } from "../output";
@@ -30,14 +30,19 @@ export function register(program: Command): void {
         if (opts.threadTs) {
           apiArgs.thread_ts = opts.threadTs;
         }
-        const result = await client.apiCall("draft.create", apiArgs) as Record<string, unknown>;
+        const result: Record<string, unknown> = await client.apiCall("draft.create", apiArgs);
 
         const format = resolveFormat(mergedOpts);
         if (format === "concise") {
           console.log(`Draft created in ${opts.channel}`);
         } else if (format === "detailed") {
           const channelLink = `https://slack.com/app_redirect?channel=${opts.channel}`;
-          console.log(formatOutput({ channel: opts.channel, channel_link: channelLink, draft: result }, "detailed"));
+          console.log(
+            formatOutput(
+              { channel: opts.channel, channel_link: channelLink, draft: result },
+              "detailed",
+            ),
+          );
         } else {
           console.log(formatOutput(result, "json"));
         }

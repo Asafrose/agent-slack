@@ -16,9 +16,7 @@ export async function resolveTextInput(opts: TextInputOptions): Promise<string> 
 
   // Read from stdin
   if (process.stdin.isTTY) {
-    throw new Error(
-      "No text provided. Use --text, --text-file, or pipe input via stdin."
-    );
+    throw new Error("No text provided. Use --text, --text-file, or pipe input via stdin.");
   }
 
   const chunks: Buffer[] = [];

@@ -106,8 +106,18 @@ describe("search-users", () => {
       mockClient.users.list.mockImplementation(async () => ({
         ok: true,
         members: [
-          { id: "U1", name: "user1", real_name: "User One", profile: { display_name: "the_wizard" } },
-          { id: "U2", name: "user2", real_name: "User Two", profile: { display_name: "the_knight" } },
+          {
+            id: "U1",
+            name: "user1",
+            real_name: "User One",
+            profile: { display_name: "the_wizard" },
+          },
+          {
+            id: "U2",
+            name: "user2",
+            real_name: "User Two",
+            profile: { display_name: "the_knight" },
+          },
         ],
         response_metadata: { next_cursor: "" },
       }));
@@ -182,7 +192,7 @@ describe("search-users", () => {
     it("passes cursor to API", async () => {
       await runCommand(["--query", "alice", "--cursor", "mycursor"]);
       expect(mockClient.users.list).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "mycursor" })
+        expect.objectContaining({ cursor: "mycursor" }),
       );
     });
   });
@@ -190,9 +200,7 @@ describe("search-users", () => {
   describe("API parameters", () => {
     it("passes limit to API", async () => {
       await runCommand(["--query", "test", "--limit", "50"]);
-      expect(mockClient.users.list).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 50 })
-      );
+      expect(mockClient.users.list).toHaveBeenCalledWith(expect.objectContaining({ limit: 50 }));
     });
   });
 

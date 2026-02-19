@@ -1,6 +1,7 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
-import { formatOutput, resolveFormat, OutputFormat } from "../output";
+import type { OutputFormat } from "../output";
+import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
 
 interface Channel {
@@ -15,7 +16,7 @@ interface Channel {
 }
 
 function formatChannelConcise(ch: Channel): string {
-  const name = ch.name ? `#${ch.name}` : ch.id ?? "unknown";
+  const name = ch.name ? `#${ch.name}` : (ch.id ?? "unknown");
   const purpose = ch.purpose?.value ?? "";
   const members = ch.num_members !== undefined ? ` [${ch.num_members} members]` : "";
   return purpose ? `${name} - ${purpose}${members}` : `${name}${members}`;
@@ -23,7 +24,7 @@ function formatChannelConcise(ch: Channel): string {
 
 function formatChannelDetailed(ch: Channel): string {
   const lines: string[] = [];
-  lines.push(`Name: ${ch.name ? `#${ch.name}` : ch.id ?? "unknown"}`);
+  lines.push(`Name: ${ch.name ? `#${ch.name}` : (ch.id ?? "unknown")}`);
   if (ch.id) lines.push(`ID: ${ch.id}`);
   if (ch.creator) lines.push(`Creator: ${ch.creator}`);
   if (ch.created) lines.push(`Created: ${new Date(ch.created * 1000).toISOString()}`);
@@ -37,7 +38,7 @@ function formatChannelDetailed(ch: Channel): string {
 function formatChannels(
   channels: Channel[],
   nextCursor: string | undefined,
-  format: OutputFormat
+  format: OutputFormat,
 ): string {
   if (format === "json") {
     return JSON.stringify({ channels, next_cursor: nextCursor ?? "" }, null, 2);
@@ -76,15 +77,16 @@ export function register(program: Command): void {
           cursor: opts.cursor,
         });
         const query = opts.query.toLowerCase();
-        const channels = (result.channels ?? []).filter((ch) => {
+        const allChannels: Channel[] = result.channels ?? [];
+        const channels = allChannels.filter((ch) => {
           const name = ch.name?.toLowerCase() ?? "";
-          const purpose = (ch as unknown as Channel).purpose?.value?.toLowerCase() ?? "";
-          const topic = (ch as unknown as Channel).topic?.value?.toLowerCase() ?? "";
+          const purpose = ch.purpose?.value?.toLowerCase() ?? "";
+          const topic = ch.topic?.value?.toLowerCase() ?? "";
           return name.includes(query) || purpose.includes(query) || topic.includes(query);
         });
         const format = resolveFormat(mergedOpts);
         const nextCursor = result.response_metadata?.next_cursor;
-        console.log(formatChannels(channels as Channel[], nextCursor, format));
+        console.log(formatChannels(channels, nextCursor, format));
       } catch (err) {
         handleSlackError(err);
       }

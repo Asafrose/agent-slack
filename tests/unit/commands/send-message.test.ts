@@ -38,21 +38,35 @@ describe("send-message", () => {
   it("sends a message and prints concise output", async () => {
     const output = await runCommand(["send-message", "--channel", "C12345", "--text", "Hello!"]);
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ channel: "C12345", text: "Hello!" })
+      expect.objectContaining({ channel: "C12345", text: "Hello!" }),
     );
     expect(output).toContain("Message sent to C12345");
     expect(output).toContain("1234567890.123456");
   });
 
   it("sends a message with --json output", async () => {
-    const output = await runCommand(["send-message", "--channel", "C12345", "--text", "Hello!", "--json"]);
+    const output = await runCommand([
+      "send-message",
+      "--channel",
+      "C12345",
+      "--text",
+      "Hello!",
+      "--json",
+    ]);
     const parsed = JSON.parse(output);
     expect(parsed.ok).toBe(true);
     expect(parsed.ts).toBe("1234567890.123456");
   });
 
   it("sends a message with --detailed output", async () => {
-    const output = await runCommand(["send-message", "--channel", "C12345", "--text", "Hello!", "--detailed"]);
+    const output = await runCommand([
+      "send-message",
+      "--channel",
+      "C12345",
+      "--text",
+      "Hello!",
+      "--detailed",
+    ]);
     const parsed = JSON.parse(output);
     expect(parsed.ts).toBe("1234567890.123456");
     expect(parsed.channel).toBe("C12345");
@@ -61,33 +75,36 @@ describe("send-message", () => {
   it("sends a reply to a thread", async () => {
     await runCommand([
       "send-message",
-      "--channel", "C12345",
-      "--text", "Reply!",
-      "--thread-ts", "9999999999.000001",
+      "--channel",
+      "C12345",
+      "--text",
+      "Reply!",
+      "--thread-ts",
+      "9999999999.000001",
     ]);
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
       expect.objectContaining({
         thread_ts: "9999999999.000001",
         text: "Reply!",
-      })
+      }),
     );
   });
 
   it("sends with reply-broadcast flag", async () => {
     await runCommand([
       "send-message",
-      "--channel", "C12345",
-      "--text", "Broadcast!",
+      "--channel",
+      "C12345",
+      "--text",
+      "Broadcast!",
       "--reply-broadcast",
     ]);
     expect(mockClient.chat.postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ reply_broadcast: true })
+      expect.objectContaining({ reply_broadcast: true }),
     );
   });
 
   it("calls handleSlackError on API failure", async () => {
-    const { handleSlackError } = await import("../../../src/errors");
-    const errorSpy = spyOn({ handleSlackError }, "handleSlackError");
     mockClient.chat.postMessage.mockRejectedValue(new Error("api_error"));
 
     const consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});

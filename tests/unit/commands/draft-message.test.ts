@@ -43,12 +43,14 @@ describe("draft-message", () => {
   it("creates a draft and prints concise output", async () => {
     const output = await runCommand([
       "draft-message",
-      "--channel", "C12345",
-      "--text", "Draft content",
+      "--channel",
+      "C12345",
+      "--text",
+      "Draft content",
     ]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
       "draft.create",
-      expect.objectContaining({ channel_id: "C12345", message: { text: "Draft content" } })
+      expect.objectContaining({ channel_id: "C12345", message: { text: "Draft content" } }),
     );
     expect(output).toContain("Draft created in C12345");
   });
@@ -56,25 +58,24 @@ describe("draft-message", () => {
   it("creates a draft with thread_ts when --thread-ts provided", async () => {
     await runCommand([
       "draft-message",
-      "--channel", "C12345",
-      "--text", "Thread draft",
-      "--thread-ts", "1234567890.000001",
+      "--channel",
+      "C12345",
+      "--text",
+      "Thread draft",
+      "--thread-ts",
+      "1234567890.000001",
     ]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
       "draft.create",
       expect.objectContaining({
         channel_id: "C12345",
         thread_ts: "1234567890.000001",
-      })
+      }),
     );
   });
 
   it("does NOT include thread_ts when not provided", async () => {
-    await runCommand([
-      "draft-message",
-      "--channel", "C12345",
-      "--text", "No thread",
-    ]);
+    await runCommand(["draft-message", "--channel", "C12345", "--text", "No thread"]);
     const callArgs = mockClient.apiCall.mock.calls[0][1] as Record<string, unknown>;
     expect(callArgs.thread_ts).toBeUndefined();
   });
@@ -82,8 +83,10 @@ describe("draft-message", () => {
   it("outputs JSON format", async () => {
     const output = await runCommand([
       "draft-message",
-      "--channel", "C12345",
-      "--text", "Draft",
+      "--channel",
+      "C12345",
+      "--text",
+      "Draft",
       "--json",
     ]);
     const parsed = JSON.parse(output);
@@ -94,8 +97,10 @@ describe("draft-message", () => {
   it("outputs detailed format with channel link", async () => {
     const output = await runCommand([
       "draft-message",
-      "--channel", "C12345",
-      "--text", "Draft",
+      "--channel",
+      "C12345",
+      "--text",
+      "Draft",
       "--detailed",
     ]);
     const parsed = JSON.parse(output);

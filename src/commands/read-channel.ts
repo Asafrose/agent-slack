@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
@@ -47,9 +47,7 @@ function formatConciseMessage(msg: Message): string {
   }
 
   if (msg.reactions && msg.reactions.length > 0) {
-    const reactionStr = msg.reactions
-      .map((r) => `${r.name}(${r.count})`)
-      .join(" ");
+    const reactionStr = msg.reactions.map((r) => `${r.name}(${r.count})`).join(" ");
     line += ` [${reactionStr}]`;
   }
 
@@ -68,9 +66,7 @@ function formatDetailedMessage(msg: Message): string {
   }
 
   if (msg.reactions && msg.reactions.length > 0) {
-    const reactionStr = msg.reactions
-      .map((r) => `:${r.name}: (${r.count})`)
-      .join(", ");
+    const reactionStr = msg.reactions.map((r) => `:${r.name}: (${r.count})`).join(", ");
     lines.push(`Reactions: ${reactionStr}`);
   }
 
@@ -108,12 +104,18 @@ export function register(program: Command): void {
         const format = resolveFormat(mergedOpts);
 
         if (format === "json") {
-          console.log(JSON.stringify({ messages: result.messages, response_metadata: result.response_metadata }, null, 2));
+          console.log(
+            JSON.stringify(
+              { messages: result.messages, response_metadata: result.response_metadata },
+              null,
+              2,
+            ),
+          );
           return;
         }
 
-        const messages = (result.messages ?? []) as Message[];
-        const meta = result.response_metadata as ResponseMetadata | undefined;
+        const messages: Message[] = result.messages ?? [];
+        const meta: ResponseMetadata | undefined = result.response_metadata;
 
         if (format === "detailed") {
           const output = messages.map(formatDetailedMessage).join("\n\n");

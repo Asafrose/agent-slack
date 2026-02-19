@@ -5,7 +5,12 @@ const mockState = {
   repliesResult: {
     ok: true,
     messages: [
-      { ts: "1234567890.000001", user: "U12345", text: "Parent message", thread_ts: "1234567890.000001" },
+      {
+        ts: "1234567890.000001",
+        user: "U12345",
+        text: "Parent message",
+        thread_ts: "1234567890.000001",
+      },
       { ts: "1234567890.000002", user: "U67890", text: "Reply 1", thread_ts: "1234567890.000001" },
     ],
     response_metadata: { next_cursor: "" },
@@ -55,8 +60,18 @@ describe("read-thread command", () => {
     mockState.repliesResult = {
       ok: true,
       messages: [
-        { ts: "1234567890.000001", user: "U12345", text: "Parent message", thread_ts: "1234567890.000001" },
-        { ts: "1234567890.000002", user: "U67890", text: "Reply 1", thread_ts: "1234567890.000001" },
+        {
+          ts: "1234567890.000001",
+          user: "U12345",
+          text: "Parent message",
+          thread_ts: "1234567890.000001",
+        },
+        {
+          ts: "1234567890.000002",
+          user: "U67890",
+          text: "Reply 1",
+          thread_ts: "1234567890.000001",
+        },
       ],
       response_metadata: { next_cursor: "" },
     };
@@ -68,9 +83,13 @@ describe("read-thread command", () => {
     it("outputs parent message without '>' prefix", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       expect(consoleLogSpy).toHaveBeenCalled();
@@ -84,9 +103,13 @@ describe("read-thread command", () => {
     it("outputs replies with '>' prefix", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -105,9 +128,13 @@ describe("read-thread command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -118,16 +145,25 @@ describe("read-thread command", () => {
       mockState.repliesResult = {
         ok: true,
         messages: [
-          { ts: "1234567890.000001", user: "U12345", text: "Parent", thread_ts: "1234567890.000001" },
+          {
+            ts: "1234567890.000001",
+            user: "U12345",
+            text: "Parent",
+            thread_ts: "1234567890.000001",
+          },
         ],
         response_metadata: { next_cursor: "cursor123" },
       };
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       const allOutput = consoleLogSpy.mock.calls.map((c) => c[0]).join("\n");
@@ -138,16 +174,25 @@ describe("read-thread command", () => {
       mockState.repliesResult = {
         ok: true,
         messages: [
-          { ts: "1234567890.000001", bot_id: "B12345", text: "Bot reply", thread_ts: "1234567890.000001" },
+          {
+            ts: "1234567890.000001",
+            bot_id: "B12345",
+            text: "Bot reply",
+            thread_ts: "1234567890.000001",
+          },
         ],
         response_metadata: { next_cursor: "" },
       };
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -159,9 +204,13 @@ describe("read-thread command", () => {
     it("labels parent message as THREAD PARENT", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
         "--detailed",
       ]);
 
@@ -172,9 +221,13 @@ describe("read-thread command", () => {
     it("labels replies as REPLY", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
         "--detailed",
       ]);
 
@@ -200,9 +253,13 @@ describe("read-thread command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
         "--detailed",
       ]);
 
@@ -217,9 +274,13 @@ describe("read-thread command", () => {
     it("outputs raw JSON with messages and response_metadata", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
         "--json",
       ]);
 
@@ -236,9 +297,13 @@ describe("read-thread command", () => {
     it("passes --channel and --ts to API", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C99999",
-        "--ts", "9999999999.111111",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C99999",
+        "--ts",
+        "9999999999.111111",
       ]);
 
       const args = mockState.capturedArgs as { channel: string; ts: string };
@@ -249,10 +314,15 @@ describe("read-thread command", () => {
     it("passes --limit to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
-        "--limit", "25",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
+        "--limit",
+        "25",
       ]);
 
       expect((mockState.capturedArgs as { limit: number })?.limit).toBe(25);
@@ -261,9 +331,13 @@ describe("read-thread command", () => {
     it("defaults limit to 100", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
       ]);
 
       expect((mockState.capturedArgs as { limit: number })?.limit).toBe(100);
@@ -272,11 +346,17 @@ describe("read-thread command", () => {
     it("passes --oldest and --latest to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
-        "--oldest", "1234567890.000000",
-        "--latest", "1234567890.999999",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
+        "--oldest",
+        "1234567890.000000",
+        "--latest",
+        "1234567890.999999",
       ]);
 
       const args = mockState.capturedArgs as { oldest: string; latest: string };
@@ -287,10 +367,15 @@ describe("read-thread command", () => {
     it("passes --cursor to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-thread",
-        "--channel", "C12345",
-        "--ts", "1234567890.000001",
-        "--cursor", "xyz789",
+        "node",
+        "cli",
+        "read-thread",
+        "--channel",
+        "C12345",
+        "--ts",
+        "1234567890.000001",
+        "--cursor",
+        "xyz789",
       ]);
 
       expect((mockState.capturedArgs as { cursor: string })?.cursor).toBe("xyz789");
@@ -310,10 +395,14 @@ describe("read-thread command", () => {
       const program = createProgram();
       await expect(
         program.parseAsync([
-          "node", "cli", "read-thread",
-          "--channel", "C12345",
-          "--ts", "1234567890.000001",
-        ])
+          "node",
+          "cli",
+          "read-thread",
+          "--channel",
+          "C12345",
+          "--ts",
+          "1234567890.000001",
+        ]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -326,10 +415,14 @@ describe("read-thread command", () => {
       const program = createProgram();
       await expect(
         program.parseAsync([
-          "node", "cli", "read-thread",
-          "--channel", "C12345",
-          "--ts", "1234567890.000001",
-        ])
+          "node",
+          "cli",
+          "read-thread",
+          "--channel",
+          "C12345",
+          "--ts",
+          "1234567890.000001",
+        ]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();

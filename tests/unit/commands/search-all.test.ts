@@ -115,7 +115,7 @@ describe("search-all", () => {
     it("passes cursor to API", async () => {
       await runCommand(["--query", "test", "--cursor", "somecursor"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "somecursor" })
+        expect.objectContaining({ cursor: "somecursor" }),
       );
     });
 
@@ -130,28 +130,28 @@ describe("search-all", () => {
     it("passes sort to API", async () => {
       await runCommand(["--query", "test", "--sort", "timestamp"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort: "timestamp" })
+        expect.objectContaining({ sort: "timestamp" }),
       );
     });
 
     it("passes sort-dir to API", async () => {
       await runCommand(["--query", "test", "--sort-dir", "asc"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort_dir: "asc" })
+        expect.objectContaining({ sort_dir: "asc" }),
       );
     });
 
     it("passes limit as count to API", async () => {
       await runCommand(["--query", "test", "--limit", "5"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ count: 5 })
+        expect.objectContaining({ count: 5 }),
       );
     });
 
     it("has default sort and sort-dir", async () => {
       await runCommand(["--query", "test"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort: "score", sort_dir: "desc" })
+        expect.objectContaining({ sort: "score", sort_dir: "desc" }),
       );
     });
   });

@@ -6,12 +6,7 @@ export interface CodedError extends Error {
 }
 
 function isCodedError(err: unknown): err is CodedError {
-  return (
-    typeof err === "object" &&
-    err !== null &&
-    "code" in err &&
-    typeof (err as CodedError).code === "string"
-  );
+  return typeof err === "object" && err !== null && "code" in err && typeof err.code === "string";
 }
 
 export function handleSlackError(error: unknown): never {

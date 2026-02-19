@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveTextInput } from "../input";
 import { formatOutput, resolveFormat } from "../output";
@@ -31,11 +31,16 @@ export function register(program: Command): void {
         if (format === "concise") {
           console.log(`Message sent to ${opts.channel} (ts: ${result.ts})`);
         } else if (format === "detailed") {
-          console.log(formatOutput({
-            ts: result.ts,
-            channel: result.channel,
-            message: result.message,
-          }, "detailed"));
+          console.log(
+            formatOutput(
+              {
+                ts: result.ts,
+                channel: result.channel,
+                message: result.message,
+              },
+              "detailed",
+            ),
+          );
         } else {
           console.log(formatOutput(result, "json"));
         }

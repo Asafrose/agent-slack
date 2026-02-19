@@ -116,9 +116,7 @@ describe("search-channels", () => {
     it("shows archived: yes for archived channels", async () => {
       mockClient.conversations.list.mockImplementation(async () => ({
         ok: true,
-        channels: [
-          { id: "C1", name: "old-channel", is_archived: true },
-        ],
+        channels: [{ id: "C1", name: "old-channel", is_archived: true }],
         response_metadata: { next_cursor: "" },
       }));
       const output = await runCommand(["--query", "old", "--detailed"]);
@@ -156,7 +154,7 @@ describe("search-channels", () => {
     it("passes cursor param to API", async () => {
       await runCommand(["--query", "general", "--cursor", "mycursor"]);
       expect(mockClient.conversations.list).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "mycursor" })
+        expect.objectContaining({ cursor: "mycursor" }),
       );
     });
   });
@@ -165,28 +163,28 @@ describe("search-channels", () => {
     it("passes types to API", async () => {
       await runCommand(["--query", "test", "--types", "public_channel,private_channel"]);
       expect(mockClient.conversations.list).toHaveBeenCalledWith(
-        expect.objectContaining({ types: "public_channel,private_channel" })
+        expect.objectContaining({ types: "public_channel,private_channel" }),
       );
     });
 
     it("passes limit to API", async () => {
       await runCommand(["--query", "test", "--limit", "50"]);
       expect(mockClient.conversations.list).toHaveBeenCalledWith(
-        expect.objectContaining({ limit: 50 })
+        expect.objectContaining({ limit: 50 }),
       );
     });
 
     it("excludes archived by default", async () => {
       await runCommand(["--query", "test"]);
       expect(mockClient.conversations.list).toHaveBeenCalledWith(
-        expect.objectContaining({ exclude_archived: true })
+        expect.objectContaining({ exclude_archived: true }),
       );
     });
 
     it("includes archived when --include-archived flag is set", async () => {
       await runCommand(["--query", "test", "--include-archived"]);
       expect(mockClient.conversations.list).toHaveBeenCalledWith(
-        expect.objectContaining({ exclude_archived: false })
+        expect.objectContaining({ exclude_archived: false }),
       );
     });
   });

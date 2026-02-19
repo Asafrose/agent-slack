@@ -26,7 +26,12 @@ export const mockConversationsHistoryResponse = {
 export const mockConversationsRepliesResponse = {
   ok: true,
   messages: [
-    { ts: "1234567890.000001", user: "U12345", text: "Parent message", thread_ts: "1234567890.000001" },
+    {
+      ts: "1234567890.000001",
+      user: "U12345",
+      text: "Parent message",
+      thread_ts: "1234567890.000001",
+    },
     { ts: "1234567890.000002", user: "U67890", text: "Reply 1", thread_ts: "1234567890.000001" },
   ],
   response_metadata: { next_cursor: "" },
@@ -44,9 +49,7 @@ export const mockConversationsListResponse = {
 export const mockSearchMessagesResponse = {
   ok: true,
   messages: {
-    matches: [
-      { ts: "1234567890.000001", channel: { id: "C12345" }, text: "Found this message" },
-    ],
+    matches: [{ ts: "1234567890.000001", channel: { id: "C12345" }, text: "Found this message" }],
     pagination: { total_count: 1, page: 1 },
   },
 };
@@ -54,7 +57,12 @@ export const mockSearchMessagesResponse = {
 export const mockUsersListResponse = {
   ok: true,
   members: [
-    { id: "U12345", name: "alice", real_name: "Alice Smith", profile: { email: "alice@example.com" } },
+    {
+      id: "U12345",
+      name: "alice",
+      real_name: "Alice Smith",
+      profile: { email: "alice@example.com" },
+    },
     { id: "U67890", name: "bob", real_name: "Bob Jones", profile: { email: "bob@example.com" } },
   ],
   response_metadata: { next_cursor: "" },
@@ -77,9 +85,7 @@ export const mockCanvasesCreateResponse = {
 
 export const mockCanvasesSectionsLookupResponse = {
   ok: true,
-  sections: [
-    { id: "section1", content: "# Title\n\nSome content here." },
-  ],
+  sections: [{ id: "section1", content: "# Title\n\nSome content here." }],
 };
 
 export const mockAuthTestResponse = {

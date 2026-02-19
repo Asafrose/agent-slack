@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
@@ -103,7 +103,7 @@ export function register(program: Command): void {
           return;
         }
 
-        const user = result.user as SlackUser | undefined;
+        const user: SlackUser | undefined = result.user;
         if (!user) {
           console.log("User not found.");
           return;

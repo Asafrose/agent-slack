@@ -87,7 +87,12 @@ describe("search-messages", () => {
         ok: true,
         messages: {
           matches: [
-            { ts: "1234567890.000001", channel: { id: "C1", name: "general" }, text: longText, username: "testuser" },
+            {
+              ts: "1234567890.000001",
+              channel: { id: "C1", name: "general" },
+              text: longText,
+              username: "testuser",
+            },
           ],
         },
       }));
@@ -162,7 +167,7 @@ describe("search-messages", () => {
     it("passes cursor to API", async () => {
       await runCommand(["--query", "test", "--cursor", "page2cursor"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "page2cursor" })
+        expect.objectContaining({ cursor: "page2cursor" }),
       );
     });
   });
@@ -171,28 +176,28 @@ describe("search-messages", () => {
     it("passes sort to API", async () => {
       await runCommand(["--query", "test", "--sort", "timestamp"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort: "timestamp" })
+        expect.objectContaining({ sort: "timestamp" }),
       );
     });
 
     it("passes sort-dir to API", async () => {
       await runCommand(["--query", "test", "--sort-dir", "asc"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort_dir: "asc" })
+        expect.objectContaining({ sort_dir: "asc" }),
       );
     });
 
     it("passes limit as count to API", async () => {
       await runCommand(["--query", "test", "--limit", "10"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ count: 10 })
+        expect.objectContaining({ count: 10 }),
       );
     });
 
     it("defaults sort to score and sort-dir to desc", async () => {
       await runCommand(["--query", "test"]);
       expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ sort: "score", sort_dir: "desc" })
+        expect.objectContaining({ sort: "score", sort_dir: "desc" }),
       );
     });
   });

@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveTextInput } from "../input";
 import { formatOutput, resolveFormat } from "../output";
@@ -23,10 +23,10 @@ export function register(program: Command): void {
         const content = await resolveTextInput({ text: opts.content, textFile: opts.contentFile });
 
         // canvases.create is not in the typed SDK; use apiCall directly.
-        const result = await client.apiCall("canvases.create", {
+        const result: Record<string, unknown> = await client.apiCall("canvases.create", {
           title: opts.title,
           document_content: { type: "markdown", markdown: content },
-        }) as Record<string, unknown>;
+        });
 
         const format = resolveFormat(mergedOpts);
         if (format === "concise") {

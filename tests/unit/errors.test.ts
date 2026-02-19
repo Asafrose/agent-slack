@@ -28,13 +28,11 @@ describe("handleSlackError", () => {
     const slackError = makeSlackError(
       "An API error occurred: channel_not_found",
       ErrorCode.PlatformError,
-      "channel_not_found"
+      "channel_not_found",
     );
 
     expect(() => handleSlackError(slackError)).toThrow("process.exit called");
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("channel_not_found")
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining("channel_not_found"));
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -44,9 +42,7 @@ describe("handleSlackError", () => {
     const genericError = new Error("Something went wrong");
 
     expect(() => handleSlackError(genericError)).toThrow("process.exit called");
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Something went wrong")
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining("Something went wrong"));
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -54,9 +50,7 @@ describe("handleSlackError", () => {
     const { handleSlackError } = await import("../../src/errors");
 
     expect(() => handleSlackError("some string error")).toThrow("process.exit called");
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining("unknown error")
-    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(expect.stringContaining("unknown error"));
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });
 
@@ -65,7 +59,7 @@ describe("handleSlackError", () => {
 
     const rateLimitError = makeSlackError(
       "You are sending too many requests. Please relax.",
-      ErrorCode.RateLimitedError
+      ErrorCode.RateLimitedError,
     );
 
     expect(() => handleSlackError(rateLimitError)).toThrow("process.exit called");

@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
@@ -60,9 +60,7 @@ function formatDetailedMessage(msg: ThreadMessage, isParent: boolean): string {
   lines.push(`Text: ${msg.text ?? ""}`);
 
   if (msg.reactions && msg.reactions.length > 0) {
-    const reactionStr = msg.reactions
-      .map((r) => `:${r.name}: (${r.count})`)
-      .join(", ");
+    const reactionStr = msg.reactions.map((r) => `:${r.name}: (${r.count})`).join(", ");
     lines.push(`Reactions: ${reactionStr}`);
   }
 
@@ -102,17 +100,21 @@ export function register(program: Command): void {
         const format = resolveFormat(mergedOpts);
 
         if (format === "json") {
-          console.log(JSON.stringify({ messages: result.messages, response_metadata: result.response_metadata }, null, 2));
+          console.log(
+            JSON.stringify(
+              { messages: result.messages, response_metadata: result.response_metadata },
+              null,
+              2,
+            ),
+          );
           return;
         }
 
-        const messages = (result.messages ?? []) as ThreadMessage[];
-        const meta = result.response_metadata as ResponseMetadata | undefined;
+        const messages: ThreadMessage[] = result.messages ?? [];
+        const meta: ResponseMetadata | undefined = result.response_metadata;
 
         if (format === "detailed") {
-          const output = messages
-            .map((msg, i) => formatDetailedMessage(msg, i === 0))
-            .join("\n\n");
+          const output = messages.map((msg, i) => formatDetailedMessage(msg, i === 0)).join("\n\n");
           console.log(output || "No messages found.");
           if (meta?.next_cursor) {
             console.log(`\n--- Next cursor: ${meta.next_cursor} ---`);

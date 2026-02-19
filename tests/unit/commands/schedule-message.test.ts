@@ -38,12 +38,15 @@ describe("schedule-message", () => {
   it("schedules a message with unix timestamp and prints concise output", async () => {
     const output = await runCommand([
       "schedule-message",
-      "--channel", "C12345",
-      "--text", "Future message",
-      "--post-at", "1700000000",
+      "--channel",
+      "C12345",
+      "--text",
+      "Future message",
+      "--post-at",
+      "1700000000",
     ]);
     expect(mockClient.chat.scheduleMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ channel: "C12345", text: "Future message", post_at: 1700000000 })
+      expect.objectContaining({ channel: "C12345", text: "Future message", post_at: 1700000000 }),
     );
     expect(output).toContain("Message scheduled in C12345");
     expect(output).toContain("Q12345");
@@ -54,21 +57,27 @@ describe("schedule-message", () => {
     const expectedUnix = Math.floor(Date.parse(iso) / 1000);
     await runCommand([
       "schedule-message",
-      "--channel", "C12345",
-      "--text", "ISO test",
-      "--post-at", iso,
+      "--channel",
+      "C12345",
+      "--text",
+      "ISO test",
+      "--post-at",
+      iso,
     ]);
     expect(mockClient.chat.scheduleMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ post_at: expectedUnix })
+      expect.objectContaining({ post_at: expectedUnix }),
     );
   });
 
   it("outputs JSON format", async () => {
     const output = await runCommand([
       "schedule-message",
-      "--channel", "C12345",
-      "--text", "Future message",
-      "--post-at", "1700000000",
+      "--channel",
+      "C12345",
+      "--text",
+      "Future message",
+      "--post-at",
+      "1700000000",
       "--json",
     ]);
     const parsed = JSON.parse(output);
@@ -79,9 +88,12 @@ describe("schedule-message", () => {
   it("outputs detailed format with human-readable time", async () => {
     const output = await runCommand([
       "schedule-message",
-      "--channel", "C12345",
-      "--text", "Future message",
-      "--post-at", "1700000000",
+      "--channel",
+      "C12345",
+      "--text",
+      "Future message",
+      "--post-at",
+      "1700000000",
       "--detailed",
     ]);
     const parsed = JSON.parse(output);
@@ -93,13 +105,17 @@ describe("schedule-message", () => {
   it("schedules a thread reply", async () => {
     await runCommand([
       "schedule-message",
-      "--channel", "C12345",
-      "--text", "Thread reply",
-      "--post-at", "1700000000",
-      "--thread-ts", "9999999999.000001",
+      "--channel",
+      "C12345",
+      "--text",
+      "Thread reply",
+      "--post-at",
+      "1700000000",
+      "--thread-ts",
+      "9999999999.000001",
     ]);
     expect(mockClient.chat.scheduleMessage).toHaveBeenCalledWith(
-      expect.objectContaining({ thread_ts: "9999999999.000001" })
+      expect.objectContaining({ thread_ts: "9999999999.000001" }),
     );
   });
 
@@ -112,9 +128,12 @@ describe("schedule-message", () => {
     try {
       await runCommand([
         "schedule-message",
-        "--channel", "C12345",
-        "--text", "Bad date",
-        "--post-at", "not-a-date",
+        "--channel",
+        "C12345",
+        "--text",
+        "Bad date",
+        "--post-at",
+        "not-a-date",
       ]);
     } catch {
       // expected

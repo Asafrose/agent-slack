@@ -1,8 +1,9 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
-import { formatMessages, MessagesResult } from "../formatters/messages";
+import type { MessagesResult } from "../formatters/messages";
+import { formatMessages } from "../formatters/messages";
 
 export function register(program: Command): void {
   program
@@ -20,15 +21,18 @@ export function register(program: Command): void {
         const globalOpts = cmd.parent?.opts() ?? {};
         const mergedOpts = { ...globalOpts, ...opts };
         const client = getClient({ token: mergedOpts.token });
+        const sort: "score" | "timestamp" = opts.sort === "timestamp" ? "timestamp" : "score";
+        const sortDir: "asc" | "desc" = opts.sortDir === "asc" ? "asc" : "desc";
         const result = await client.search.messages({
           query: opts.query,
-          sort: opts.sort as "score" | "timestamp",
-          sort_dir: opts.sortDir as "asc" | "desc",
+          sort,
+          sort_dir: sortDir,
           count: parseInt(opts.limit, 10),
           cursor: opts.cursor,
         });
         const format = resolveFormat(mergedOpts);
-        console.log(formatMessages(result.messages as MessagesResult | undefined, format));
+        const messages: MessagesResult | undefined = result.messages;
+        console.log(formatMessages(messages, format));
       } catch (err) {
         handleSlackError(err);
       }

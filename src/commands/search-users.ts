@@ -1,6 +1,7 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
-import { resolveFormat, OutputFormat } from "../output";
+import type { OutputFormat } from "../output";
+import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
 
 interface UserProfile {
@@ -23,7 +24,7 @@ interface SlackUser {
 }
 
 function formatUserConcise(u: SlackUser): string {
-  const username = u.name ? `@${u.name}` : u.id ?? "unknown";
+  const username = u.name ? `@${u.name}` : (u.id ?? "unknown");
   const displayName = u.real_name ?? u.profile?.display_name ?? "";
   const title = u.profile?.title ?? "";
   const parts = [`${username}${displayName ? ` (${displayName})` : ""}`];
@@ -33,7 +34,7 @@ function formatUserConcise(u: SlackUser): string {
 
 function formatUserDetailed(u: SlackUser): string {
   const lines: string[] = [];
-  lines.push(`Username: ${u.name ? `@${u.name}` : u.id ?? "unknown"}`);
+  lines.push(`Username: ${u.name ? `@${u.name}` : (u.id ?? "unknown")}`);
   if (u.id) lines.push(`ID: ${u.id}`);
   if (u.real_name) lines.push(`Real Name: ${u.real_name}`);
   if (u.profile?.display_name) lines.push(`Display Name: ${u.profile.display_name}`);
@@ -49,7 +50,7 @@ function formatUserDetailed(u: SlackUser): string {
 function formatUsers(
   users: SlackUser[],
   nextCursor: string | undefined,
-  format: OutputFormat
+  format: OutputFormat,
 ): string {
   if (format === "json") {
     return JSON.stringify({ users, next_cursor: nextCursor ?? "" }, null, 2);
@@ -95,11 +96,10 @@ export function register(program: Command): void {
           cursor: opts.cursor,
         });
         const format = resolveFormat(mergedOpts);
-        const users = (result.members ?? []).filter((u) =>
-          matchesQuery(u as SlackUser, opts.query)
-        );
+        const allUsers: SlackUser[] = result.members ?? [];
+        const users = allUsers.filter((u) => matchesQuery(u, opts.query));
         const nextCursor = result.response_metadata?.next_cursor;
-        console.log(formatUsers(users as SlackUser[], nextCursor, format));
+        console.log(formatUsers(users, nextCursor, format));
       } catch (err) {
         handleSlackError(err);
       }

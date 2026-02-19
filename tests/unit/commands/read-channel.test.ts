@@ -146,9 +146,7 @@ describe("read-channel command", () => {
     it("uses bot_id as author for bot messages", async () => {
       mockState.historyResult = {
         ok: true,
-        messages: [
-          { ts: "1234567890.000001", bot_id: "B12345", text: "Bot message" },
-        ],
+        messages: [{ ts: "1234567890.000001", bot_id: "B12345", text: "Bot message" }],
         response_metadata: { next_cursor: "" },
       };
 
@@ -180,7 +178,12 @@ describe("read-channel command", () => {
     it("outputs messages in detailed format", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--detailed",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--detailed",
       ]);
 
       expect(consoleLogSpy).toHaveBeenCalled();
@@ -193,7 +196,12 @@ describe("read-channel command", () => {
     it("includes timestamp and ts in detailed output", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--detailed",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -216,7 +224,12 @@ describe("read-channel command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--detailed",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -240,7 +253,12 @@ describe("read-channel command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--detailed",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -251,9 +269,7 @@ describe("read-channel command", () => {
   describe("JSON output (--json)", () => {
     it("outputs raw JSON response", async () => {
       const program = createProgram();
-      await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--json",
-      ]);
+      await program.parseAsync(["node", "cli", "read-channel", "--channel", "C12345", "--json"]);
 
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -264,9 +280,7 @@ describe("read-channel command", () => {
 
     it("includes response_metadata in JSON output", async () => {
       const program = createProgram();
-      await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--json",
-      ]);
+      await program.parseAsync(["node", "cli", "read-channel", "--channel", "C12345", "--json"]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
       const parsed = JSON.parse(output);
@@ -278,7 +292,13 @@ describe("read-channel command", () => {
     it("passes --limit to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--limit", "50",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--limit",
+        "50",
       ]);
 
       expect((mockState.capturedArgs as { limit: number })?.limit).toBe(50);
@@ -287,7 +307,13 @@ describe("read-channel command", () => {
     it("passes --oldest to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--oldest", "1234567890.000000",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--oldest",
+        "1234567890.000000",
       ]);
 
       expect((mockState.capturedArgs as { oldest: string })?.oldest).toBe("1234567890.000000");
@@ -296,7 +322,13 @@ describe("read-channel command", () => {
     it("passes --latest to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--latest", "1234567890.999999",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--latest",
+        "1234567890.999999",
       ]);
 
       expect((mockState.capturedArgs as { latest: string })?.latest).toBe("1234567890.999999");
@@ -305,7 +337,13 @@ describe("read-channel command", () => {
     it("passes --cursor to API call", async () => {
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-channel", "--channel", "C12345", "--cursor", "abc123",
+        "node",
+        "cli",
+        "read-channel",
+        "--channel",
+        "C12345",
+        "--cursor",
+        "abc123",
       ]);
 
       expect((mockState.capturedArgs as { cursor: string })?.cursor).toBe("abc123");
@@ -331,7 +369,7 @@ describe("read-channel command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-channel", "--channel", "INVALID"])
+        program.parseAsync(["node", "cli", "read-channel", "--channel", "INVALID"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -343,7 +381,7 @@ describe("read-channel command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-channel", "--channel", "C12345"])
+        program.parseAsync(["node", "cli", "read-channel", "--channel", "C12345"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();

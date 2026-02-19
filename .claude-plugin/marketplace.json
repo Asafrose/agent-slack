@@ -1,0 +1,25 @@
+{
+  "name": "agent-slack-marketplace",
+  "owner": {
+    "name": "Asaf Rosentswaig"
+  },
+  "metadata": {
+    "description": "Slack CLI plugin for Claude Code - replaces MCP Slack tools with a token-efficient CLI"
+  },
+  "plugins": [
+    {
+      "name": "agent-slack",
+      "source": ".",
+      "description": "Slack CLI tool for AI agents - send messages, search channels/messages/users, read threads, manage canvases",
+      "version": "0.1.0",
+      "author": {
+        "name": "Asaf Rosentswaig"
+      },
+      "repository": "https://github.com/asafrosentswaig/agent-slack",
+      "license": "MIT",
+      "keywords": ["slack", "cli", "mcp", "agent", "automation"],
+      "category": "communication",
+      "tags": ["slack", "messaging", "productivity"]
+    }
+  ]
+}

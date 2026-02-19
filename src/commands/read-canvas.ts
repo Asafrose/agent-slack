@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import type { Command } from "commander";
 import { getClient } from "../client";
 import { resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
@@ -25,16 +25,13 @@ export function register(program: Command): void {
         const mergedOpts = { ...globalOpts, ...opts };
         const client = getClient({ token: mergedOpts.token });
 
-        const result = await (client as unknown as {
-          canvases: {
-            sections: {
-              lookup: (args: { canvas_id: string; criteria: { section_types: string[] } }) => Promise<CanvasSectionsLookupResult>;
-            };
-          };
-        }).canvases.sections.lookup({
-          canvas_id: opts.canvas,
-          criteria: { section_types: ["any_header", "paragraph"] },
-        });
+        const result: CanvasSectionsLookupResult = await client.apiCall(
+          "canvases.sections.lookup",
+          {
+            canvas_id: opts.canvas,
+            criteria: { section_types: ["any_header", "paragraph"] },
+          },
+        );
 
         const format = resolveFormat(mergedOpts);
 

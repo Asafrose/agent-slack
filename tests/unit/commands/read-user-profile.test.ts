@@ -216,7 +216,12 @@ describe("read-user-profile command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-user-profile", "--user", "U12345", "--detailed",
+        "node",
+        "cli",
+        "read-user-profile",
+        "--user",
+        "U12345",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -248,7 +253,12 @@ describe("read-user-profile command", () => {
 
       const program = createProgram();
       await program.parseAsync([
-        "node", "cli", "read-user-profile", "--user", "U99999", "--detailed",
+        "node",
+        "cli",
+        "read-user-profile",
+        "--user",
+        "U99999",
+        "--detailed",
       ]);
 
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -261,9 +271,7 @@ describe("read-user-profile command", () => {
   describe("JSON output (--json)", () => {
     it("outputs raw user JSON", async () => {
       const program = createProgram();
-      await program.parseAsync([
-        "node", "cli", "read-user-profile", "--user", "U12345", "--json",
-      ]);
+      await program.parseAsync(["node", "cli", "read-user-profile", "--user", "U12345", "--json"]);
 
       expect(consoleLogSpy).toHaveBeenCalled();
       const output = consoleLogSpy.mock.calls[0][0] as string;
@@ -318,7 +326,7 @@ describe("read-user-profile command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-user-profile", "--user", "INVALID"])
+        program.parseAsync(["node", "cli", "read-user-profile", "--user", "INVALID"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
@@ -330,7 +338,7 @@ describe("read-user-profile command", () => {
 
       const program = createProgram();
       await expect(
-        program.parseAsync(["node", "cli", "read-user-profile", "--user", "U12345"])
+        program.parseAsync(["node", "cli", "read-user-profile", "--user", "U12345"]),
       ).rejects.toThrow("process.exit called");
 
       expect(consoleErrorSpy).toHaveBeenCalled();
