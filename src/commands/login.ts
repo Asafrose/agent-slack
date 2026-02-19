@@ -13,6 +13,17 @@ function openBrowser(url: string): void {
   Bun.spawn([cmd, url], { stdio: ["ignore", "ignore", "ignore"] });
 }
 
+// Encode port into state: "random_hex:port"
+function encodeState(port: number): string {
+  const nonce = randomBytes(16).toString("hex");
+  return `${nonce}:${port}`;
+}
+
+// Extract nonce from state for validation
+function getNonce(state: string): string {
+  return state.split(":")[0];
+}
+
 export function register(program: Command): void {
   program
     .command("login")
@@ -20,10 +31,12 @@ export function register(program: Command): void {
     .option("--port <port>", "Local callback server port", String(OAUTH_CALLBACK_PORT))
     .action(async (opts) => {
       const requestedPort = parseInt(opts.port, 10);
-      const state = randomBytes(16).toString("hex");
 
       let server: ReturnType<typeof Bun.serve> | undefined;
-      let actualRedirectUri: string;
+
+      // The redirect_uri registered in Slack points to the worker (HTTPS).
+      // The worker decodes the port from state and redirects to localhost.
+      const workerRedirectUri = `${OAUTH_WORKER_URL}/callback`;
 
       const tokenPromise = new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -54,7 +67,7 @@ export function register(program: Command): void {
               );
             }
 
-            if (callbackState !== state) {
+            if (!callbackState || getNonce(callbackState) !== getNonce(expectedState)) {
               clearTimeout(timeout);
               server?.stop();
               reject(new Error("OAuth state mismatch — possible CSRF attack"));
@@ -78,7 +91,7 @@ export function register(program: Command): void {
               const workerResponse = await fetch(`${OAUTH_WORKER_URL}/token-exchange`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code, redirect_uri: actualRedirectUri }),
+                body: JSON.stringify({ code, redirect_uri: workerRedirectUri }),
               });
 
               interface TokenExchangeResponse {
@@ -128,13 +141,17 @@ export function register(program: Command): void {
         });
 
         const actualPort = server!.port;
-        actualRedirectUri = `http://localhost:${actualPort}/callback`;
+        const expectedState = encodeState(actualPort);
+
+        // Slack OAuth URL — redirect_uri points to the worker (HTTPS).
+        // State encodes "nonce:port" so the worker can extract the port
+        // and redirect to localhost after Slack's callback.
         const authorizeUrl =
           `https://slack.com/oauth/v2/authorize?` +
           `client_id=${SLACK_CLIENT_ID}` +
           `&user_scope=${encodeURIComponent(OAUTH_USER_SCOPES)}` +
-          `&redirect_uri=${encodeURIComponent(actualRedirectUri)}` +
-          `&state=${state}`;
+          `&redirect_uri=${encodeURIComponent(workerRedirectUri)}` +
+          `&state=${encodeURIComponent(expectedState)}`;
 
         console.log(`Waiting for Slack authorization on port ${actualPort}...`);
         openBrowser(authorizeUrl);
