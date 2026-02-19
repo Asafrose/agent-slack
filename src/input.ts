@@ -1,5 +1,3 @@
-import { readFileSync } from "fs";
-
 export interface TextInputOptions {
   text?: string;
   textFile?: string;
@@ -11,7 +9,7 @@ export async function resolveTextInput(opts: TextInputOptions): Promise<string> 
   }
 
   if (opts.textFile) {
-    return readFileSync(opts.textFile, "utf-8");
+    return await Bun.file(opts.textFile).text();
   }
 
   // Read from stdin

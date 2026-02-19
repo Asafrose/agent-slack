@@ -5,8 +5,9 @@ export interface ClientOptions {
   token?: string;
 }
 
-export function getClient(opts?: ClientOptions): WebClient {
-  const token = process.env.SLACK_TOKEN || opts?.token || getConfig().token;
+export async function getClient(opts?: ClientOptions): Promise<WebClient> {
+  const config = await getConfig();
+  const token = process.env.SLACK_TOKEN || opts?.token || config.token;
 
   if (!token) {
     console.error(

@@ -11,11 +11,13 @@ A token-efficient CLI that replaces the Slack MCP tools. Use `agent-slack` for a
 
 ## Authentication
 
+The easiest way to authenticate is `agent-slack login` — it opens a browser for Slack OAuth and saves the token automatically.
+
 Auth is resolved in this order:
 
 1. `SLACK_TOKEN` environment variable
 2. `--token <token>` global flag
-3. `~/.agent-slack/config.json` → `{ "token": "xoxb-..." }`
+3. `~/.agent-slack/config.json` → `{ "token": "xoxp-..." }` (set by `login` or manually)
 
 ## Global Flags
 
@@ -704,6 +706,43 @@ Error: No Slack token found. Set SLACK_TOKEN env var, use --token flag, or add t
 
 # Slack API error
 Slack API error: An API error occurred: channel_not_found (code: channel_not_found)
+```
+
+---
+
+### login
+
+Authenticate with Slack via OAuth. Opens a browser for authorization and saves the token automatically.
+
+```
+agent-slack login [--port <port>]
+```
+
+| Flag             | Default | Description                   |
+| ---------------- | ------- | ----------------------------- |
+| `--port <port>`  | 9876    | Local callback server port    |
+
+**Examples:**
+
+```bash
+agent-slack login
+agent-slack login --port 3000
+```
+
+---
+
+### logout
+
+Remove the stored Slack token from `~/.agent-slack/config.json`.
+
+```
+agent-slack logout
+```
+
+**Examples:**
+
+```bash
+agent-slack logout
 ```
 
 ---

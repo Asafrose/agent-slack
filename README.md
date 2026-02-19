@@ -5,9 +5,27 @@ A Bun CLI + Claude Code plugin that replaces the 12 Slack MCP server tools with 
 ## Prerequisites
 
 - [Bun](https://bun.sh/) v1.0+
-- A Slack Bot token (`xoxb-...`) — see [Slack Bot Setup](#slack-bot-setup) below
+- A Slack workspace you can authorize against
 
-## Slack Bot Setup
+## Quick Start — OAuth Login
+
+The easiest way to authenticate:
+
+```bash
+agent-slack login
+```
+
+This opens your browser for Slack OAuth authorization. Once you click "Allow", the token is saved automatically to `~/.agent-slack/config.json`.
+
+To remove the stored token:
+
+```bash
+agent-slack logout
+```
+
+## Alternative: Manual Token Setup
+
+If you prefer manual token configuration (e.g. for bot tokens or CI environments):
 
 ### 1. Create a Slack App
 
@@ -15,12 +33,30 @@ A Bun CLI + Claude Code plugin that replaces the 12 Slack MCP server tools with 
 2. Choose **From scratch**, give it a name (e.g. "Agent Slack"), and select your workspace
 3. You'll land on the app's **Basic Information** page
 
-### 2. Add Bot Token Scopes
+### 2. Choose Token Type
 
-Navigate to **OAuth & Permissions** in the sidebar, scroll to **Scopes**, and add these **Bot Token Scopes**:
+agent-slack supports both **User Tokens** and **Bot Tokens**. Choose based on your use case:
+
+| | User Token (`xoxp-...`) | Bot Token (`xoxb-...`) |
+| --- | --- | --- |
+| **Messages sent as** | You (your Slack identity) | The bot app |
+| **Access to DMs** | Yes, your own DMs | Only if invited |
+| **Drafts** | Appear in your Slack drafts | Not supported |
+| **Channel access** | All channels you're in | Only channels bot is invited to |
+| **Search private/DMs** | Yes (`search-all`) | Limited |
+| **Best for** | Personal AI assistant (like MCP) | Shared team automation |
+
+**Recommended: User Token** if you want the same experience as the Slack MCP tools (read/write as yourself).
+
+### 3. Add Token Scopes
+
+Navigate to **OAuth & Permissions** in the sidebar, scroll to **Scopes**.
+
+**For a User Token**, add these **User Token Scopes**:
 
 | Scope              | Required By                                         | Purpose                           |
 | ------------------ | --------------------------------------------------- | --------------------------------- |
+| `search:read`      | `search-messages`, `search-all`                     | Search messages across channels   |
 | `chat:write`       | `send-message`, `schedule-message`, `draft-message` | Post and schedule messages        |
 | `channels:history` | `read-channel`, `read-thread`                       | Read messages in public channels  |
 | `groups:history`   | `read-channel`, `read-thread`                       | Read messages in private channels |
@@ -30,29 +66,20 @@ Navigate to **OAuth & Permissions** in the sidebar, scroll to **Scopes**, and ad
 | `groups:read`      | `search-channels`                                   | List and search private channels  |
 | `users:read`       | `search-users`, `read-user-profile`                 | Look up user profiles             |
 | `users:read.email` | `search-users`, `read-user-profile`                 | Access user email addresses       |
-| `search:read`      | `search-messages`, `search-all`                     | Search messages across channels   |
 | `canvases:write`   | `create-canvas`                                     | Create Canvas documents           |
 | `canvases:read`    | `read-canvas`                                       | Read Canvas content               |
 
-**Minimal scope set** — if you only need read operations, you can skip `chat:write` and `canvases:write`. Add scopes incrementally based on which commands you plan to use.
+**For a Bot Token**, add the same scopes under **Bot Token Scopes** instead. Note that the bot will need to be invited to each channel (`/invite @YourBotName`), and `draft-message` only works with user tokens.
 
-### 3. Install the App to Your Workspace
+**Minimal scope set** — if you only need read operations, skip `chat:write` and `canvases:write`.
+
+### 4. Install the App to Your Workspace
 
 1. Still on **OAuth & Permissions**, scroll up and click **Install to Workspace**
 2. Review the permissions and click **Allow**
-3. Copy the **Bot User OAuth Token** (starts with `xoxb-`) — this is your `SLACK_TOKEN`
-
-### 4. Invite the Bot to Channels
-
-The bot can only access channels it has been invited to. For each channel you want to read from or post to:
-
-```
-/invite @YourBotName
-```
-
-Or mention the bot in the channel and Slack will prompt you to invite it.
-
-**Note:** The bot can search public channels without being a member (via `search:read`), but it needs to be a member to read history (`channels:history`) or post messages (`chat:write`).
+3. Copy the token:
+   - **User Token**: copy the **User OAuth Token** (`xoxp-...`)
+   - **Bot Token**: copy the **Bot User OAuth Token** (`xoxb-...`)
 
 ### 5. Configure the Token
 
@@ -60,41 +87,27 @@ Pick one of the three auth methods:
 
 ```bash
 # Option A: Environment variable (recommended)
-export SLACK_TOKEN=xoxb-your-token-here
+export SLACK_TOKEN=xoxp-your-token-here
 
 # Option B: Config file
 mkdir -p ~/.agent-slack
-echo '{ "token": "xoxb-your-token-here" }' > ~/.agent-slack/config.json
+echo '{ "token": "xoxp-your-token-here" }' > ~/.agent-slack/config.json
 
 # Option C: Pass per-command
-agent-slack read-channel --channel C12345 --token xoxb-your-token
+agent-slack read-channel --channel C12345 --token xoxp-your-token
 ```
 
 ### 6. Verify It Works
 
 ```bash
-# Should print your bot's profile info
+# Should print your profile info
 agent-slack read-user-profile
 
 # Should list channels matching the query
 agent-slack search-channels --query "general"
 ```
 
-If you see `Slack API error: missing_scope`, go back to step 2 and add the required scope for that command.
-
-### Using a User Token Instead
-
-If you need to use a **User Token** (`xoxp-...`) instead of a Bot Token — for example, to access `draft-message` (which requires user-level auth) or to search DMs via `search-all` — add these **User Token Scopes** under OAuth & Permissions:
-
-- `search:read` — search messages
-- `chat:write` — send messages
-- `channels:history`, `groups:history`, `im:history`, `mpim:history` — read messages
-- `channels:read`, `groups:read` — list channels
-- `users:read`, `users:read.email` — user profiles
-
-After installing, copy the **User OAuth Token** (`xoxp-...`) and use it as your `SLACK_TOKEN`.
-
-**Note:** The `draft-message` command uses the undocumented `draft.create` API, which only works with user tokens.
+If you see `Slack API error: missing_scope`, go back to step 3 and add the required scope for that command.
 
 ## Installation
 
@@ -114,11 +127,11 @@ After `bun link`, the `agent-slack` command is available system-wide.
 
 The CLI resolves auth in this order (first match wins):
 
-1. `SLACK_TOKEN` environment variable (recommended)
+1. `SLACK_TOKEN` environment variable
 2. `--token` flag on any command
-3. `~/.agent-slack/config.json` file
+3. `~/.agent-slack/config.json` file (set by `agent-slack login` or manually)
 
-See [Slack Bot Setup](#slack-bot-setup) above for how to obtain and configure your token.
+The fastest way to authenticate is `agent-slack login` — see [Quick Start](#quick-start--oauth-login) above.
 
 ## Usage
 
@@ -144,6 +157,8 @@ agent-slack <command> --help
 | `search-all`        | Search all channels incl. private/DMs | `slack_search_public_and_private` |
 | `create-canvas`     | Create a Canvas document              | `slack_create_canvas`             |
 | `read-canvas`       | Read a Canvas document                | `slack_read_canvas`               |
+| `login`             | Authenticate with Slack via OAuth     | —                                 |
+| `logout`            | Remove stored Slack token             | —                                 |
 
 ### Output Formats
 

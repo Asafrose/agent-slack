@@ -1,0 +1,9 @@
+name = "agent-slack-oauth"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# SLACK_CLIENT_ID is public, set as a var
+[vars]
+SLACK_CLIENT_ID = "YOUR_CLIENT_ID"
+
+# SLACK_CLIENT_SECRET must be set via: npx wrangler secret put SLACK_CLIENT_SECRET

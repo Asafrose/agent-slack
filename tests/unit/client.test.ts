@@ -17,7 +17,7 @@ describe("getClient auth resolution", () => {
     process.env.SLACK_TOKEN = "xoxb-env-token";
 
     const { getClient } = await import("../../src/client");
-    const client = getClient();
+    const client = await getClient();
 
     // WebClient stores token internally
     expect((client as unknown as { token: string }).token).toBe("xoxb-env-token");
@@ -27,7 +27,7 @@ describe("getClient auth resolution", () => {
     delete process.env.SLACK_TOKEN;
 
     const { getClient } = await import("../../src/client");
-    const client = getClient({ token: "xoxb-flag-token" });
+    const client = await getClient({ token: "xoxb-flag-token" });
 
     expect((client as unknown as { token: string }).token).toBe("xoxb-flag-token");
   });
@@ -36,11 +36,11 @@ describe("getClient auth resolution", () => {
     delete process.env.SLACK_TOKEN;
 
     mock.module("../../src/config", () => ({
-      getConfig: () => ({ token: "xoxb-config-token" }),
+      getConfig: async () => ({ token: "xoxb-config-token" }),
     }));
 
     const { getClient } = await import("../../src/client");
-    const client = getClient();
+    const client = await getClient();
 
     expect((client as unknown as { token: string }).token).toBe("xoxb-config-token");
   });
@@ -49,7 +49,7 @@ describe("getClient auth resolution", () => {
     delete process.env.SLACK_TOKEN;
 
     mock.module("../../src/config", () => ({
-      getConfig: () => ({}),
+      getConfig: async () => ({}),
     }));
 
     const consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
@@ -59,7 +59,7 @@ describe("getClient auth resolution", () => {
 
     const { getClient } = await import("../../src/client");
 
-    expect(() => getClient()).toThrow("process.exit called");
+    await expect(getClient()).rejects.toThrow("process.exit called");
     expect(consoleErrorSpy).toHaveBeenCalled();
     expect(processExitSpy).toHaveBeenCalledWith(1);
   });

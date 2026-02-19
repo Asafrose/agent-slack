@@ -87,7 +87,7 @@ export function register(program: Command): void {
       try {
         const globalOpts = cmd.parent?.opts() ?? {};
         const mergedOpts = { ...globalOpts, ...opts };
-        const client = getClient({ token: mergedOpts.token });
+        const client = await getClient({ token: mergedOpts.token });
 
         let userId = opts.user;
         if (!userId) {

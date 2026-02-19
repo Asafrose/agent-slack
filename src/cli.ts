@@ -11,6 +11,8 @@ import { register as registerReadUserProfile } from "./commands/read-user-profil
 import { register as registerSearchAll } from "./commands/search-all";
 import { register as registerCreateCanvas } from "./commands/create-canvas";
 import { register as registerReadCanvas } from "./commands/read-canvas";
+import { register as registerLogin } from "./commands/login";
+import { register as registerLogout } from "./commands/logout";
 
 const program = new Command();
 
@@ -34,6 +36,8 @@ registerReadUserProfile(program);
 registerSearchAll(program);
 registerCreateCanvas(program);
 registerReadCanvas(program);
+registerLogin(program);
+registerLogout(program);
 
 export function run(): void {
   program.parse();

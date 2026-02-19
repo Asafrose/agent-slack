@@ -18,7 +18,7 @@ export function register(program: Command): void {
       try {
         const globalOpts = cmd.parent?.opts() ?? {};
         const mergedOpts = { ...globalOpts, ...opts };
-        const client = getClient({ token: mergedOpts.token });
+        const client = await getClient({ token: mergedOpts.token });
         const text = await resolveTextInput({ text: opts.text, textFile: opts.textFile });
 
         // The Slack drafts API is undocumented and not in the typed SDK.
