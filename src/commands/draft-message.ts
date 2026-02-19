@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { getClient } from "../client";
-import { resolveTextInput } from "../input";
+import { resolveTextInput, buildMessageBlocks } from "../input";
 import { formatOutput, resolveFormat } from "../output";
 import { handleSlackError } from "../errors";
 
@@ -24,7 +24,7 @@ export function register(program: Command): void {
         // Use client.apiCall to hit the draft.create endpoint directly.
         const apiArgs: Record<string, unknown> = {
           channel_id: opts.channel,
-          message: { text },
+          message: { text, blocks: buildMessageBlocks(text) },
         };
         if (opts.threadTs) {
           apiArgs.thread_ts = opts.threadTs;

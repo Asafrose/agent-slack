@@ -3,6 +3,21 @@ export interface TextInputOptions {
   textFile?: string;
 }
 
+export function buildMessageBlocks(text: string): Record<string, unknown>[] {
+  return [
+    { type: "section", text: { type: "mrkdwn", text } },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_",
+        },
+      ],
+    },
+  ];
+}
+
 export async function resolveTextInput(opts: TextInputOptions): Promise<string> {
   if (opts.text) {
     return opts.text;

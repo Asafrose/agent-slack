@@ -18,6 +18,15 @@ mock.module("../../../src/input", () => ({
     if (opts.text) return opts.text;
     return "stdin text";
   }),
+  buildMessageBlocks: (text: string) => [
+    { type: "section", text: { type: "mrkdwn", text } },
+    {
+      type: "context",
+      elements: [
+        { type: "mrkdwn", text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_" },
+      ],
+    },
+  ],
 }));
 
 async function runCommand(args: string[]): Promise<string> {
@@ -50,7 +59,16 @@ describe("draft-message", () => {
     ]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
       "draft.create",
-      expect.objectContaining({ channel_id: "C12345", message: { text: "Draft content" } }),
+      expect.objectContaining({
+        channel_id: "C12345",
+        message: {
+          text: "Draft content",
+          blocks: expect.arrayContaining([
+            expect.objectContaining({ type: "section" }),
+            expect.objectContaining({ type: "context" }),
+          ]),
+        },
+      }),
     );
     expect(output).toContain("Draft created in C12345");
   });
