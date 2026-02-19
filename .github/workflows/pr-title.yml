@@ -1,0 +1,25 @@
+name: PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  check-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate conventional commit prefix
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          PATTERN="^(feat|fix|docs|chore|ci|refactor|test|perf|style|build|revert)(\(.+\))?!?: .+"
+          if [[ ! "$TITLE" =~ $PATTERN ]]; then
+            echo "::error::PR title must follow conventional commits: <type>[optional scope]: <description>"
+            echo ""
+            echo "Allowed types: feat, fix, docs, chore, ci, refactor, test, perf, style, build, revert"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add new search command"
+            echo "  fix(auth): handle expired tokens"
+            echo "  chore(main): release 0.3.0"
+            exit 1
+          fi
