@@ -9,10 +9,6 @@ A Bun CLI + Claude Code plugin that replaces the 12 Slack MCP server tools with 
 
 ## Authentication
 
-### Quick Start (end user)
-
-If someone has already set up the Slack app and deployed the OAuth worker, just run:
-
 ```bash
 agent-slack login
 ```
@@ -23,74 +19,6 @@ This opens your browser for Slack OAuth authorization. Click "Allow" and the tok
 agent-slack read-user-profile   # verify it works
 agent-slack logout               # remove stored token
 ```
-
-### Setting Up the Slack App (first-time setup)
-
-To use OAuth login, you need a Slack app and a deployed Cloudflare Worker.
-
-#### 1. Create a Slack App
-
-1. Go to [api.slack.com/apps](https://api.slack.com/apps) and click **Create New App** → **From scratch**
-2. Name it (e.g. "agent-slack") and select your workspace
-3. Under **OAuth & Permissions** → **User Token Scopes**, add these 12 scopes:
-
-   | Scope | Purpose |
-   |-------|---------|
-   | `search:read` | Search messages and files |
-   | `chat:write` | Send messages, schedule messages, create drafts |
-   | `channels:history` | Read public channel messages |
-   | `groups:history` | Read private channel messages |
-   | `im:history` | Read DM messages |
-   | `mpim:history` | Read group DM messages |
-   | `channels:read` | Search and list channels |
-   | `groups:read` | Search and list private channels |
-   | `users:read` | Search users and read profiles |
-   | `users:read.email` | Include email in user profiles |
-   | `canvases:write` | Create Canvas documents |
-   | `canvases:read` | Read Canvas documents |
-
-4. Under **OAuth & Permissions** → **Redirect URLs**, add:
-   ```
-   https://agent-slack.asafr1993.workers.dev/callback
-   ```
-5. Under **Manage Distribution**, click **Activate Public Distribution** (required for OAuth to work outside your own workspace)
-6. Note your **Client ID** and **Client Secret** from the **Basic Information** page
-
-#### 2. Deploy the Cloudflare Worker
-
-The `worker/` directory contains a Cloudflare Worker that acts as a token exchange proxy. It keeps the `client_secret` safe server-side.
-
-```bash
-cd worker
-npm install
-npx wrangler secret put SLACK_CLIENT_SECRET   # paste your client secret when prompted
-npx wrangler deploy
-```
-
-#### 3. Update Constants
-
-Edit `src/constants.ts` with your Slack app's client ID and your deployed worker URL:
-
-```ts
-export const SLACK_CLIENT_ID = "your-client-id";
-export const OAUTH_WORKER_URL = "https://your-worker.your-subdomain.workers.dev";
-```
-
-#### How OAuth Works
-
-```
-agent-slack login
-  → Starts local HTTP server on a random port
-  → Opens browser to Slack OAuth authorize URL
-  → User clicks "Allow" in Slack
-  → Slack redirects to Cloudflare Worker (HTTPS)
-  → Worker redirects to http://localhost:PORT/callback
-  → CLI sends auth code to Worker's /token-exchange endpoint
-  → Worker exchanges code for token using client_secret
-  → CLI saves token to ~/.agent-slack/config.json
-```
-
-The local port is encoded in the OAuth `state` parameter so the worker knows where to redirect back to.
 
 ## Installation
 
