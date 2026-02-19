@@ -3,14 +3,17 @@ name: PR Title
 on:
   pull_request:
     types: [opened, edited, synchronize]
+  push:
+    branches: [release-please--*]
 
 jobs:
   check-title:
     runs-on: ubuntu-latest
     steps:
       - name: Validate conventional commit prefix
+        if: github.event_name == 'pull_request'
         run: |
-          TITLE="${{ github.event.pull_request.title }}"
+          TITLE='${{ github.event.pull_request.title }}'
           PATTERN="^(feat|fix|docs|chore|ci|refactor|test|perf|style|build|revert)(\(.+\))?!?: .+"
           if [[ ! "$TITLE" =~ $PATTERN ]]; then
             echo "::error::PR title must follow conventional commits: <type>[optional scope]: <description>"
@@ -23,3 +26,6 @@ jobs:
             echo "  chore(main): release 0.3.0"
             exit 1
           fi
+      - name: Skip validation for release-please
+        if: github.event_name == 'push'
+        run: echo "Release-please PR — title is always conventional commit compliant"
