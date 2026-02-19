@@ -1,10 +1,31 @@
 {
   "name": "agent-slack",
   "version": "0.1.0",
+  "description": "Slack CLI tool for AI agents - replaces MCP Slack tools with a token-efficient CLI",
   "type": "module",
   "bin": {
     "agent-slack": "bin/agent-slack.ts"
   },
+  "files": [
+    "bin/",
+    "src/",
+    "skills/",
+    ".claude-plugin/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Asafrose/agent-slack.git"
+  },
+  "keywords": [
+    "slack",
+    "cli",
+    "mcp",
+    "agent",
+    "claude",
+    "automation"
+  ],
+  "author": "Asaf Rosentswaig",
+  "license": "MIT",
   "scripts": {
     "test": "bun test",
     "lint": "eslint .",
