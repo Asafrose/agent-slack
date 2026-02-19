@@ -18,17 +18,24 @@ export function register(program: Command): void {
         const globalOpts = cmd.parent?.opts() ?? {};
         const mergedOpts = { ...globalOpts, ...opts };
         const client = getClient({ token: mergedOpts.token });
+
+        // Resolve content from --content, --content-file, or stdin
         const content = await resolveTextInput({ text: opts.content, textFile: opts.contentFile });
-        const result = await (client as unknown as {
-          canvases: {
-            create: (args: { title: string; document_content: { type: string; markdown: string } }) => Promise<unknown>;
-          };
-        }).canvases.create({
+
+        // canvases.create is not in the typed SDK; use apiCall directly.
+        const result = await client.apiCall("canvases.create", {
           title: opts.title,
           document_content: { type: "markdown", markdown: content },
-        });
+        }) as Record<string, unknown>;
+
         const format = resolveFormat(mergedOpts);
-        console.log(formatOutput(result, format));
+        if (format === "concise") {
+          console.log(`Canvas created: ${opts.title} (id: ${result.canvas_id})`);
+        } else if (format === "detailed") {
+          console.log(formatOutput({ canvas_id: result.canvas_id, title: opts.title }, "detailed"));
+        } else {
+          console.log(formatOutput(result, "json"));
+        }
       } catch (err) {
         handleSlackError(err);
       }
