@@ -123,13 +123,27 @@ This project is a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude
 
 ### Setup
 
-Point Claude Code at this directory as a plugin:
+Install the plugin from within Claude Code using the `/plugin` command:
+
+1. Add the marketplace (one-time):
+   ```
+   /plugin marketplace add Asafrose/agent-slack
+   ```
+
+2. Install the plugin:
+   ```
+   /plugin install agent-slack@agent-slack
+   ```
+
+You can choose to install at **user** scope (default, applies to all projects) or **project** scope (applies to the current repository only).
+
+For local development or testing, you can also load the plugin directly from a local directory:
 
 ```bash
 claude --plugin-dir /path/to/agent-slack
 ```
 
-Or add it to your Claude Code settings. Once loaded, Claude will automatically use `agent-slack` via Bash whenever Slack tasks arise — no MCP server needed.
+Once loaded, Claude will automatically use `agent-slack` via Bash whenever Slack tasks arise — no MCP server needed.
 
 ### How It Works
 
