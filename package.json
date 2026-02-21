@@ -1,6 +1,6 @@
 {
   "name": "@asafrose/agent-slack",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Slack CLI tool for AI agents - replaces MCP Slack tools with a token-efficient CLI",
   "type": "module",
   "bin": {

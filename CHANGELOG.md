@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.3](https://github.com/Asafrose/agent-slack/compare/v0.3.2...v0.3.3) (2026-02-21)
+
+
+### Bug Fixes
+
+* use "./" instead of "." for marketplace plugin source ([f0cbfe6](https://github.com/Asafrose/agent-slack/commit/f0cbfe63ad22054ae894d75a233425a1fd2e5db6))
+* use "./" instead of "." for marketplace plugin source ([00bb94c](https://github.com/Asafrose/agent-slack/commit/00bb94c5fae6cf1209664630fde7f8c8d942b5f7))
+
 ## [0.3.2](https://github.com/Asafrose/agent-slack/compare/v0.3.1...v0.3.2) (2026-02-21)
 
 
