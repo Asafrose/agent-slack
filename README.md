@@ -126,6 +126,7 @@ This project is a [Claude Code plugin](https://docs.anthropic.com/en/docs/claude
 Install the plugin from within Claude Code using the `/plugin` command:
 
 1. Add the marketplace (one-time):
+
    ```
    /plugin marketplace add Asafrose/agent-slack
    ```
