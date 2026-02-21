@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.2](https://github.com/Asafrose/agent-slack/compare/v0.3.1...v0.3.2) (2026-02-21)
+
+
+### Bug Fixes
+
+* **ci:** use Node 24 for npm OIDC trusted publishing ([74b1e6d](https://github.com/Asafrose/agent-slack/commit/74b1e6da9ef197ad6fa5c808a07b14dba22a2864))
+* **ci:** use Node 24 for npm OIDC trusted publishing ([b119cd4](https://github.com/Asafrose/agent-slack/commit/b119cd44f8f1ddd18212ba10af96e96020092cab))
+
 ## [0.3.1](https://github.com/Asafrose/agent-slack/compare/v0.3.0...v0.3.1) (2026-02-21)
 
 
