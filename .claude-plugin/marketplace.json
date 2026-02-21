@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "agent-slack",
-      "source": ".",
+      "source": "./",
       "description": "Slack CLI tool for AI agents - send messages, search channels/messages/users, read threads, manage canvases",
       "version": "0.1.0",
       "author": {
