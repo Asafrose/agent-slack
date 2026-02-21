@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/Asafrose/agent-slack/compare/v0.3.0...v0.3.1) (2026-02-21)
+
+
+### Bug Fixes
+
+* **ci:** use GH_PAT in release-please to trigger downstream workflows ([5e13f86](https://github.com/Asafrose/agent-slack/commit/5e13f86f9d3cca4212877725ae7d2bbfac2fcfea))
+* **ci:** use GH_PAT in release-please to trigger downstream workflows ([859a163](https://github.com/Asafrose/agent-slack/commit/859a163b194bb53501d77d013ab8dff7941d5299))
+
 ## [0.3.0](https://github.com/Asafrose/agent-slack/compare/v0.2.0...v0.3.0) (2026-02-19)
 
 
