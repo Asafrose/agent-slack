@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/Asafrose/agent-slack/compare/v0.3.3...v0.3.4) (2026-02-22)
+
+
+### Bug Fixes
+
+* correct Slack API usage across multiple commands ([4d3578d](https://github.com/Asafrose/agent-slack/commit/4d3578da16c0b72474aef45c859db56b8f1cee04))
+
 ## [0.3.3](https://github.com/Asafrose/agent-slack/compare/v0.3.2...v0.3.3) (2026-02-21)
 
 
