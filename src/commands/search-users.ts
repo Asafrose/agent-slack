@@ -56,13 +56,10 @@ function formatUsers(
     return JSON.stringify({ users, next_cursor: nextCursor ?? "" }, null, 2);
   }
   if (format === "detailed") {
-    const parts = users.map(formatUserDetailed);
-    const out = parts.join("\n\n");
+    const out = users.map(formatUserDetailed).join("\n\n");
     return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
   }
-  // concise
-  const lines = users.map(formatUserConcise);
-  const out = lines.join("\n");
+  const out = users.map(formatUserConcise).join("\n");
   return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
 }
 

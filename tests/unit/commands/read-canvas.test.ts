@@ -188,7 +188,7 @@ describe("read-canvas command", () => {
 
       const args = mockState.capturedArgs as { criteria: { section_types: string[] } };
       expect(args.criteria).toBeDefined();
-      expect(Array.isArray(args.criteria.section_types)).toBe(true);
+      expect(args.criteria.section_types).toEqual(["any_header", "paragraph"]);
     });
   });
 

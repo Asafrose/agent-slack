@@ -44,13 +44,10 @@ function formatChannels(
     return JSON.stringify({ channels, next_cursor: nextCursor ?? "" }, null, 2);
   }
   if (format === "detailed") {
-    const parts = channels.map(formatChannelDetailed);
-    const out = parts.join("\n\n");
+    const out = channels.map(formatChannelDetailed).join("\n\n");
     return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
   }
-  // concise
-  const lines = channels.map(formatChannelConcise);
-  const out = lines.join("\n");
+  const out = channels.map(formatChannelConcise).join("\n");
   return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
 }
 

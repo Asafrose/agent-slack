@@ -98,30 +98,40 @@ describe("search-all", () => {
     });
   });
 
-  describe("pagination cursor", () => {
-    it("shows next cursor when present", async () => {
+  describe("pagination", () => {
+    it("shows page info when multiple pages", async () => {
       mockClient.search.messages.mockImplementation(async () => ({
         ok: true,
         messages: {
           matches: [{ ts: "1234567890.000001", channel: { id: "C1" }, text: "msg" }],
-          next_cursor: "nextpage456",
+          pagination: { total_count: 50, page: 2, pages: 3 },
         },
       }));
       const output = await runCommand(["--query", "test"]);
-      expect(output).toContain("nextpage456");
+      expect(output).toContain("Page 2 of 3");
     });
 
-    it("passes cursor to API", async () => {
-      await runCommand(["--query", "test", "--cursor", "somecursor"]);
-      expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "somecursor" }),
-      );
+    it("does not show page info for single page", async () => {
+      mockClient.search.messages.mockImplementation(async () => ({
+        ok: true,
+        messages: {
+          matches: [{ ts: "1234567890.000001", channel: { id: "C1" }, text: "msg" }],
+          pagination: { total_count: 5, page: 1, pages: 1 },
+        },
+      }));
+      const output = await runCommand(["--query", "test"]);
+      expect(output).not.toContain("Page");
     });
 
-    it("does not pass cursor when not provided", async () => {
+    it("passes page to API", async () => {
+      await runCommand(["--query", "test", "--page", "3"]);
+      expect(mockClient.search.messages).toHaveBeenCalledWith(expect.objectContaining({ page: 3 }));
+    });
+
+    it("does not pass page when not provided", async () => {
       await runCommand(["--query", "test"]);
       const callArgs = mockClient.search.messages.mock.calls[0][0] as Record<string, unknown>;
-      expect(callArgs.cursor).toBeUndefined();
+      expect(callArgs.page).toBeUndefined();
     });
   });
 

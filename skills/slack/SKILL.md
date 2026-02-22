@@ -144,20 +144,21 @@ agent-slack schedule-message --channel C12345 --text "Meeting" --post-at "2025-1
 Create a draft message in a channel (not sent immediately).
 
 ```
-agent-slack draft-message --channel <id> [--text <text>] [--text-file <file>] [--thread-ts <ts>]
+agent-slack draft-message --channel <id> [--text <text>] [--text-file <file>] [--thread-ts <ts>] [--reply-broadcast]
 ```
 
 **Required:** `--channel`
 **Content:** `--text`, `--text-file`, or stdin
 
-| Flag                 | Description                    |
-| -------------------- | ------------------------------ |
-| `--channel <id>`     | Channel ID or name             |
-| `--text <text>`      | Inline message text            |
-| `--text-file <file>` | Path to file with message text |
-| `--thread-ts <ts>`   | Create draft as thread reply   |
+| Flag                 | Description                           |
+| -------------------- | ------------------------------------- |
+| `--channel <id>`     | Channel ID or name                    |
+| `--text <text>`      | Inline message text                   |
+| `--text-file <file>` | Path to file with message text        |
+| `--thread-ts <ts>`   | Create draft as thread reply          |
+| `--reply-broadcast`  | Also post thread reply to the channel |
 
-**Note:** Uses the undocumented Slack `draft.create` API endpoint.
+**Note:** Uses the undocumented Slack `drafts.create` API endpoint.
 
 **Output examples:**
 
@@ -449,18 +450,18 @@ agent-slack search-channels --query "old" --include-archived
 Search messages in public Slack channels.
 
 ```
-agent-slack search-messages --query <query> [--sort <sort>] [--sort-dir <dir>] [--limit <n>] [--cursor <cursor>]
+agent-slack search-messages --query <query> [--sort <sort>] [--sort-dir <dir>] [--limit <n>] [--page <n>]
 ```
 
 **Required:** `--query`
 
-| Flag                | Default | Description                                              |
-| ------------------- | ------- | -------------------------------------------------------- |
-| `--query <query>`   | —       | Search query with optional modifiers (see Search Syntax) |
-| `--sort <sort>`     | `score` | Sort order: `score` or `timestamp`                       |
-| `--sort-dir <dir>`  | `desc`  | Sort direction: `asc` or `desc`                          |
-| `--limit <n>`       | 20      | Max results                                              |
-| `--cursor <cursor>` | —       | Pagination cursor                                        |
+| Flag               | Default | Description                                              |
+| ------------------ | ------- | -------------------------------------------------------- |
+| `--query <query>`  | —       | Search query with optional modifiers (see Search Syntax) |
+| `--sort <sort>`    | `score` | Sort order: `score` or `timestamp`                       |
+| `--sort-dir <dir>` | `desc`  | Sort direction: `asc` or `desc`                          |
+| `--limit <n>`      | 20      | Max results per page                                     |
+| `--page <n>`       | —       | Page number for pagination                               |
 
 **Output examples:**
 
@@ -493,7 +494,7 @@ agent-slack search-messages --query "incident has:pin"
 Search messages across all channels including private channels, group DMs, and DMs.
 
 ```
-agent-slack search-all --query <query> [--sort <sort>] [--sort-dir <dir>] [--limit <n>] [--channel-types <types>] [--cursor <cursor>]
+agent-slack search-all --query <query> [--sort <sort>] [--sort-dir <dir>] [--limit <n>] [--channel-types <types>] [--page <n>]
 ```
 
 **Required:** `--query`
@@ -503,9 +504,9 @@ agent-slack search-all --query <query> [--sort <sort>] [--sort-dir <dir>] [--lim
 | `--query <query>`         | —                                        | Search query with optional modifiers |
 | `--sort <sort>`           | `score`                                  | Sort order: `score` or `timestamp`   |
 | `--sort-dir <dir>`        | `desc`                                   | Direction: `asc` or `desc`           |
-| `--limit <n>`             | 20                                       | Max results                          |
+| `--limit <n>`             | 20                                       | Max results per page                 |
 | `--channel-types <types>` | `public_channel,private_channel,mpim,im` | Channel types to search              |
-| `--cursor <cursor>`       | —                                        | Pagination cursor                    |
+| `--page <n>`              | —                                        | Page number for pagination           |
 
 Same output format as `search-messages`.
 
@@ -665,16 +666,22 @@ agent-slack read-channel --channel C12345 --json | jq '.messages[0].text'
 
 ## Pagination
 
-Commands that return lists support `--cursor` for pagination. The cursor value appears at the end of output when more results are available:
+Pagination varies by command type:
+
+**Cursor-based** (`read-channel`, `read-thread`, `search-channels`, `search-users`): Use `--cursor` with the cursor value shown at the end of output. Pagination is complete when no "Next cursor" appears in the output (the cursor is empty).
 
 ```
 --- Next cursor: dGVhbTpDMDYxRkE1UEI= ---
 ```
 
-Use it in the next call:
-
 ```bash
 agent-slack read-channel --channel C12345 --cursor dGVhbTpDMDYxRkE1UEI=
+```
+
+**Page-based** (`search-messages`, `search-all`): Use `--page <n>`. Output shows "Page X of Y" when multiple pages exist. Pagination is complete when the current page equals the total pages.
+
+```bash
+agent-slack search-messages --query "deploy" --page 2
 ```
 
 ---
@@ -762,4 +769,4 @@ agent-slack logout
 
 6. **Paginate large results** — `read-channel` defaults to 100 messages. Use `--limit` and `--cursor` for large channels.
 
-7. **`search-all` vs `search-messages`** — `search-messages` searches public channels only. Use `search-all` when you need to search private channels, DMs, or group DMs.
+7. **`search-all` vs `search-messages`** — `search-messages` searches public channels only. Use `search-all` when you need to search private channels, DMs, or group DMs. Both use page-based pagination (`--page`).

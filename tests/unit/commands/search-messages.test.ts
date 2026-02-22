@@ -150,24 +150,40 @@ describe("search-messages", () => {
     });
   });
 
-  describe("pagination cursor", () => {
-    it("shows next cursor when present", async () => {
+  describe("pagination", () => {
+    it("shows page info when multiple pages", async () => {
       mockClient.search.messages.mockImplementation(async () => ({
         ok: true,
         messages: {
           matches: [{ ts: "1234567890.000001", channel: { id: "C1" }, text: "msg" }],
-          next_cursor: "cursor123",
+          pagination: { total_count: 50, page: 1, pages: 3 },
         },
       }));
       const output = await runCommand(["--query", "test"]);
-      expect(output).toContain("cursor123");
+      expect(output).toContain("Page 1 of 3");
     });
 
-    it("passes cursor to API", async () => {
-      await runCommand(["--query", "test", "--cursor", "page2cursor"]);
-      expect(mockClient.search.messages).toHaveBeenCalledWith(
-        expect.objectContaining({ cursor: "page2cursor" }),
-      );
+    it("does not show page info for single page", async () => {
+      mockClient.search.messages.mockImplementation(async () => ({
+        ok: true,
+        messages: {
+          matches: [{ ts: "1234567890.000001", channel: { id: "C1" }, text: "msg" }],
+          pagination: { total_count: 5, page: 1, pages: 1 },
+        },
+      }));
+      const output = await runCommand(["--query", "test"]);
+      expect(output).not.toContain("Page");
+    });
+
+    it("passes page to API", async () => {
+      await runCommand(["--query", "test", "--page", "2"]);
+      expect(mockClient.search.messages).toHaveBeenCalledWith(expect.objectContaining({ page: 2 }));
+    });
+
+    it("does not pass page when not provided", async () => {
+      await runCommand(["--query", "test"]);
+      const callArgs = mockClient.search.messages.mock.calls[0][0] as Record<string, unknown>;
+      expect(callArgs.page).toBeUndefined();
     });
   });
 

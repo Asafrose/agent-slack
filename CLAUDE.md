@@ -76,6 +76,16 @@ Global flags (`--token`, `--detailed`, `--json`) are defined on the parent progr
 - `.claude-plugin/plugin.json` — Plugin manifest (name, version, description)
 - `skills/slack/SKILL.md` — The skill Claude loads on demand. Contains full documentation of all 12 commands, search syntax, output format examples, error codes, and AI agent tips. Frontmatter declares `allowed-tools: Bash(agent-slack *)` and `user-invocable: false`
 
+## PR Title Convention
+
+PR titles must follow conventional commits format: `<type>[optional scope]: <description>`
+
+Allowed types: `feat`, `fix`, `docs`, `chore`, `ci`, `refactor`, `test`, `perf`, `style`, `build`, `revert`
+
+Examples: `feat: add new search command`, `fix(auth): handle expired tokens`
+
+CI enforces this via the `check-title` workflow.
+
 ## Undocumented APIs
 
 `draft-message` and `create-canvas` use `client.apiCall()` instead of typed SDK methods because these Slack APIs are not in the official `@slack/web-api` types.

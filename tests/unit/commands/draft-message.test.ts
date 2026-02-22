@@ -23,7 +23,10 @@ mock.module("../../../src/input", () => ({
     {
       type: "context",
       elements: [
-        { type: "mrkdwn", text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_" },
+        {
+          type: "mrkdwn",
+          text: "_Sent by <https://github.com/Asafrose/agent-slack|agent-slack>_",
+        },
       ],
     },
   ],
@@ -58,16 +61,21 @@ describe("draft-message", () => {
       "Draft content",
     ]);
     expect(mockClient.apiCall).toHaveBeenCalledWith(
-      "draft.create",
+      "drafts.create",
       expect.objectContaining({
-        channel_id: "C12345",
-        message: {
-          text: "Draft content",
-          blocks: expect.arrayContaining([
-            expect.objectContaining({ type: "section" }),
-            expect.objectContaining({ type: "context" }),
-          ]),
-        },
+        client_msg_id: expect.any(String),
+        is_from_composer: false,
+        file_ids: [],
+        destinations: [
+          expect.objectContaining({
+            channel_id: "C12345",
+            broadcast: false,
+          }),
+        ],
+        blocks: expect.arrayContaining([
+          expect.objectContaining({ type: "section" }),
+          expect.objectContaining({ type: "context" }),
+        ]),
       }),
     );
     expect(output).toContain("Draft created in C12345");
@@ -83,19 +91,32 @@ describe("draft-message", () => {
       "--thread-ts",
       "1234567890.000001",
     ]);
-    expect(mockClient.apiCall).toHaveBeenCalledWith(
-      "draft.create",
-      expect.objectContaining({
-        channel_id: "C12345",
-        thread_ts: "1234567890.000001",
-      }),
-    );
+    const callArgs = mockClient.apiCall.mock.calls[0][1] as Record<string, unknown>;
+    const destinations = callArgs.destinations as Array<Record<string, unknown>>;
+    expect(destinations[0].thread_ts).toBe("1234567890.000001");
   });
 
   it("does NOT include thread_ts when not provided", async () => {
     await runCommand(["draft-message", "--channel", "C12345", "--text", "No thread"]);
     const callArgs = mockClient.apiCall.mock.calls[0][1] as Record<string, unknown>;
-    expect(callArgs.thread_ts).toBeUndefined();
+    const destinations = callArgs.destinations as Array<Record<string, unknown>>;
+    expect(destinations[0].thread_ts).toBeUndefined();
+  });
+
+  it("passes reply-broadcast to destinations", async () => {
+    await runCommand([
+      "draft-message",
+      "--channel",
+      "C12345",
+      "--text",
+      "Broadcast draft",
+      "--thread-ts",
+      "1234567890.000001",
+      "--reply-broadcast",
+    ]);
+    const callArgs = mockClient.apiCall.mock.calls[0][1] as Record<string, unknown>;
+    const destinations = callArgs.destinations as Array<Record<string, unknown>>;
+    expect(destinations[0].broadcast).toBe(true);
   });
 
   it("outputs JSON format", async () => {
