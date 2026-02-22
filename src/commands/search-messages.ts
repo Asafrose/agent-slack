@@ -13,7 +13,7 @@ export function register(program: Command): void {
     .option("--sort <sort>", "Sort by score or timestamp", "score")
     .option("--sort-dir <dir>", "Sort direction (asc or desc)", "desc")
     .option("--limit <limit>", "Maximum number of results", "20")
-    .option("--cursor <cursor>", "Pagination cursor")
+    .option("--page <page>", "Page number for pagination")
     .option("--detailed", "Detailed output")
     .option("--json", "JSON output")
     .action(async (opts, cmd) => {
@@ -27,7 +27,7 @@ export function register(program: Command): void {
           sort,
           sort_dir: sortDir,
           count: parseInt(opts.limit, 10),
-          cursor: opts.cursor,
+          page: opts.page ? parseInt(opts.page, 10) : undefined,
         });
         const format = resolveFormat(mergedOpts);
         const messages: MessagesResult | undefined = result.messages;

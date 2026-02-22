@@ -50,7 +50,7 @@ export const mockSearchMessagesResponse = {
   ok: true,
   messages: {
     matches: [{ ts: "1234567890.000001", channel: { id: "C12345" }, text: "Found this message" }],
-    pagination: { total_count: 1, page: 1 },
+    pagination: { total_count: 1, page: 1, pages: 1 },
   },
 };
 

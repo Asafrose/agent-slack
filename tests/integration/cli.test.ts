@@ -120,7 +120,7 @@ describe("agent-slack CLI", () => {
       expect(stdout).toContain("--sort");
       expect(stdout).toContain("--sort-dir");
       expect(stdout).toContain("--limit");
-      expect(stdout).toContain("--cursor");
+      expect(stdout).toContain("--page");
     });
 
     it("read-thread --help shows --ts flag", () => {
@@ -146,13 +146,13 @@ describe("agent-slack CLI", () => {
       expect(stdout).toContain("--user");
     });
 
-    it("search-all --help shows --channel-types flag", () => {
+    it("search-all --help shows expected flags", () => {
       const { stdout, exitCode } = run(["search-all", "--help"]);
       expect(exitCode).toBe(0);
       expect(stdout).toContain("--query");
       expect(stdout).toContain("--channel-types");
       expect(stdout).toContain("--sort");
-      expect(stdout).toContain("--cursor");
+      expect(stdout).toContain("--page");
     });
 
     it("create-canvas --help shows --title and content flags", () => {

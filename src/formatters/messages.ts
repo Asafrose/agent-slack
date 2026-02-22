@@ -19,7 +19,6 @@ export interface MessagesResult {
   matches?: MessageMatch[];
   pagination?: { total_count?: number; page?: number; pages?: number };
   paging?: { count?: number; total?: number; page?: number; pages?: number };
-  next_cursor?: string;
 }
 
 export function formatDate(ts: string | undefined): string {
@@ -55,14 +54,18 @@ export function formatMessages(result: MessagesResult | undefined, format: Outpu
     return JSON.stringify(result ?? {}, null, 2);
   }
   const matches = result?.matches ?? [];
-  const nextCursor = result?.next_cursor;
+  const pagination = result?.pagination ?? result?.paging;
+  const page = pagination?.page;
+  const pages = pagination?.pages;
+  const pageInfo =
+    page !== undefined && pages !== undefined && pages > 1 ? `Page ${page} of ${pages}` : undefined;
   if (format === "detailed") {
     const parts = matches.map(formatMessageDetailed);
     const out = parts.join("\n\n");
-    return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+    return pageInfo ? `${out}\n\n${pageInfo}` : out;
   }
   // concise
   const lines = matches.map(formatMessageConcise);
   const out = lines.join("\n");
-  return nextCursor ? `${out}\n\nNext cursor: ${nextCursor}` : out;
+  return pageInfo ? `${out}\n\n${pageInfo}` : out;
 }

@@ -12,6 +12,7 @@ export function register(program: Command): void {
     .option("--text <text>", "Message text")
     .option("--text-file <file>", "File containing message text")
     .option("--thread-ts <ts>", "Thread timestamp for draft reply")
+    .option("--reply-broadcast", "Also post thread reply to the channel")
     .option("--detailed", "Detailed output")
     .option("--json", "JSON output")
     .action(async (opts, cmd) => {
@@ -21,15 +22,20 @@ export function register(program: Command): void {
         const text = await resolveTextInput({ text: opts.text, textFile: opts.textFile });
 
         // The Slack drafts API is undocumented and not in the typed SDK.
-        // Use client.apiCall to hit the draft.create endpoint directly.
-        const apiArgs: Record<string, unknown> = {
-          channel_id: opts.channel,
-          message: { text, blocks: buildMessageBlocks(text) },
-        };
-        if (opts.threadTs) {
-          apiArgs.thread_ts = opts.threadTs;
-        }
-        const result: Record<string, unknown> = await client.apiCall("draft.create", apiArgs);
+        // Use client.apiCall to hit the drafts.create endpoint directly.
+        const result: Record<string, unknown> = await client.apiCall("drafts.create", {
+          client_msg_id: crypto.randomUUID(),
+          is_from_composer: false,
+          file_ids: [],
+          destinations: [
+            {
+              channel_id: opts.channel,
+              thread_ts: opts.threadTs,
+              broadcast: opts.replyBroadcast ?? false,
+            },
+          ],
+          blocks: buildMessageBlocks(text),
+        });
 
         const format = resolveFormat(mergedOpts);
         if (format === "concise") {
