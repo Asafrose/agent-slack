@@ -11,6 +11,7 @@ import { register as registerReadUserProfile } from "./commands/read-user-profil
 import { register as registerSearchAll } from "./commands/search-all";
 import { register as registerCreateCanvas } from "./commands/create-canvas";
 import { register as registerReadCanvas } from "./commands/read-canvas";
+import { register as registerUploadFile } from "./commands/upload-file";
 import { register as registerLogin } from "./commands/login";
 import { register as registerLogout } from "./commands/logout";
 
@@ -35,6 +36,7 @@ registerReadUserProfile(program);
 registerSearchAll(program);
 registerCreateCanvas(program);
 registerReadCanvas(program);
+registerUploadFile(program);
 registerLogin(program);
 registerLogout(program);
 
