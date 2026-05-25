@@ -1,6 +1,6 @@
 ---
 name: slack
-description: Interact with Slack workspaces - send messages, search channels/messages/users, read threads, manage canvases
+description: Interact with Slack workspaces - send messages, search channels/messages/users, read threads, manage canvases, upload files
 user-invocable: false
 allowed-tools: Bash(agent-slack *)
 ---
@@ -561,6 +561,47 @@ Bot: no
 agent-slack search-users --query "alice"
 agent-slack search-users --query "engineer" --limit 50
 agent-slack search-users --query "alice@example.com"
+```
+
+---
+
+### upload-file
+
+Upload a file to a Slack channel or thread.
+
+```
+agent-slack upload-file --channel <id> --file <path> [--comment <text>] [--thread-ts <ts>]
+```
+
+**Required:** `--channel`, `--file`
+
+| Flag               | Description                          |
+| ------------------ | ------------------------------------ |
+| `--channel <id>`   | Channel ID or name                   |
+| `--file <path>`    | Local file path to upload            |
+| `--comment <text>` | Initial comment with the upload      |
+| `--thread-ts <ts>` | Thread timestamp to upload into      |
+
+**Output examples:**
+
+```
+# concise (default)
+File "report.md" uploaded to C12345
+
+# detailed
+{ "ok": true, "files": [ ... ] }
+
+# json (raw API response)
+{ "ok": true, "files": [ ... ] }
+```
+
+**Examples:**
+
+```bash
+agent-slack upload-file --channel C12345 --file ./report.md
+agent-slack upload-file --channel C12345 --file ./report.md --comment "Coverage report"
+agent-slack upload-file --channel C12345 --file ./report.md --thread-ts 1234567890.123456
+agent-slack upload-file --channel C12345 --file ./screenshot.png --json
 ```
 
 ---
