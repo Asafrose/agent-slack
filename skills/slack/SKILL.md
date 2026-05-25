@@ -589,10 +589,18 @@ agent-slack upload-file --channel <id> --file <path> [--comment <text>] [--threa
 File "report.md" uploaded to C12345
 
 # detailed
-{ "ok": true, "files": [ ... ] }
+{
+  "ok": true,
+  "files": [
+    {
+      "id": "F12345",
+      "title": "report.md"
+    }
+  ]
+}
 
 # json (raw API response)
-{ "ok": true, "files": [ ... ] }
+{ "ok": true, "files": [ { "id": "F12345", ... } ] }
 ```
 
 **Examples:**
